@@ -4,6 +4,7 @@
 
 - **PC에서 켜는 방법**: [docs/WINDOWS_SETUP.md](docs/WINDOWS_SETUP.md)
 - **서버(Supabase) 설정**: [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md)
+- **인터넷 주소**: https://baduk-lesson.onrender.com ([docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md))
 - **설계 문서**: [docs/DESIGN.md](docs/DESIGN.md)
 
 ## 진행 상황
