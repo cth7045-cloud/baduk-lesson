@@ -1,0 +1,20 @@
+# Render 정적 사이트 설정 (참고용 — 실제 서비스는 Render 대시보드/연결 도구로 만들었음)
+services:
+  - type: web
+    runtime: static
+    name: baduk-lesson
+    branch: claude/baduk-tutoring-web-u8zoia
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+    routes:
+      # 모든 주소를 앱으로 (새로고침·링크 직접 접속 대비)
+      - type: rewrite
+        source: /*
+        destination: /index.html
