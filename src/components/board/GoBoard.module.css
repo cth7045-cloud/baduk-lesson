@@ -1,0 +1,49 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  background-color: #dcb36f;
+  background-size: cover;
+  box-shadow:
+    0 1px 2px rgba(60, 40, 10, 0.25),
+    0 6px 18px rgba(60, 40, 10, 0.12);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  /* 두 번 탭 확대 지연을 없애되 화면 스크롤은 허용 */
+  touch-action: manipulation;
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+.coords {
+  font-weight: 500;
+}
+
+.highlight {
+  animation: pulse 1.1s ease-in-out 3;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.12);
+  }
+}

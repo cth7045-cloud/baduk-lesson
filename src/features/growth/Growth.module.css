@@ -1,0 +1,289 @@
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.message {
+  margin: 80px auto;
+  text-align: center;
+  color: var(--ink-2);
+}
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+.back {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.muted {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.error {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--danger);
+}
+
+/* 학생 고르기 */
+.pickList {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+}
+.pickList a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+.pickList a:hover {
+  background: rgba(0, 0, 0, 0.025);
+}
+.pickList span {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+/* 숫자 카드 */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  border-left: 1px solid var(--line);
+}
+.kpi:first-child {
+  border-left: none;
+}
+.kpiLabel {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.kpiValue {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.kpiNote {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+@media (max-width: 640px) {
+  .head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kpi:nth-child(3) {
+    border-left: none;
+  }
+  .kpi:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 820px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.panel {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  break-inside: avoid;
+}
+.panelTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.private {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.lessonList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+.lessonList li {
+  border-bottom: 1px solid var(--line);
+}
+.lessonList a {
+  display: flex;
+  gap: 12px;
+  padding: 7px 0;
+  color: inherit;
+  text-decoration: none;
+}
+.lessonList a span {
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 입력 */
+.input,
+.textarea {
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 15px;
+  color: var(--ink);
+}
+.input {
+  height: 38px;
+}
+.textarea {
+  width: 100%;
+  padding: 9px 11px;
+  resize: vertical;
+  line-height: 1.6;
+}
+.grow {
+  flex: 1;
+  min-width: 160px;
+}
+.rankForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rankForm .input:first-child {
+  width: 110px;
+}
+.rankList {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.rankList li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.rankDate {
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.remove,
+.noteActions button {
+  margin-left: auto;
+  border: none;
+  background: none;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.remove:hover,
+.noteActions button:hover {
+  color: var(--danger);
+}
+
+.noteForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.noteList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.noteList li {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.noteMeta {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.noteActions {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.noteBody {
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.printToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+/* 인쇄 (학부모 상담용) */
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+  .page {
+    max-width: none;
+    gap: 12px;
+  }
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
