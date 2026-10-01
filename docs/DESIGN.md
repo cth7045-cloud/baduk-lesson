@@ -241,3 +241,12 @@ SGF는 몇 KB 수준의 텍스트라 Storage가 아닌 `boards.sgf` 컬럼에 �
 - 선생님 현황표: 학생 × 문제 (✓/✕ + 시도 횟수, 제출, 정답률, 첫 시도 정답률). 칸 → 풀이 기록 판에 피드백 코멘트(수마다 + 총평)
 - 학생 "새 피드백" = 마지막으로 연 시각(`board_reads`)보다 늦게 바뀐 코멘트가 있음
 - 마이그레이션 0006: `create_problem` 함수
+
+## 10. 5단계 구현 메모 (2026-10-01)
+
+- 자료실: SGF는 `boards`(kind material) + 파일 안의 코멘트를 `board_comments`로 옮겨 바로 수정 가능. PDF·이미지는 Storage 비공개 버킷 `materials`(최대 30MB, 파일 이름은 영문 무작위 ID)에 저장, 1시간짜리 서명 주소로 표시
+- 공개 범위: 전체 / 특정 학생(`material_targets`). 파일 읽기 권한도 같은 규칙(`private.can_read_material_file`)
+- PDF 보기: pdf.js 구형 브라우저 호환판(legacy) — 최신판은 아직 일부 브라우저에 없는 기능을 써서 삼성 인터넷 등에서 실패할 수 있음. 화면 가까이 온 쪽만 그림
+- 기보 제출함: 학생 SGF의 원래 메모는 `board_source_notes`(읽기 전용 "원본 기보 메모"), 선생님 코멘트·변화도는 판에 추가, "코멘트 다 달았어요" → status reviewed
+- 마이그레이션 0007: 버킷·파일 권한, `create_sgf_material`, `create_submission`
+- 빌드: 화면별 지연 로딩 + React·Supabase 라이브러리 별도 묶음(앱 업데이트 시 학생 기기 캐시 재사용)

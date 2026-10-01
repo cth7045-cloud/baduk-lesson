@@ -13,7 +13,7 @@
 | 2 | Supabase 연동 (로그인, 권한, DB) | 완료 |
 | 3 | 실시간 수업방 | 완료 |
 | 4 | 과제 출제·자동 채점·학생별 피드백 | 완료 |
-| 5 | 자료실, 기보 제출함 | |
+| 5 | 자료실, 기보 제출함 | 완료 |
 | 6 | 성장 기록 | |
 
 ## 개발자용 명령
@@ -31,7 +31,8 @@ npm run build    # 배포용 빌드 (dist/)
 - `src/features/auth`, `src/features/students` 로그인, 학생 관리
 - `src/features/lesson` 실시간 수업방·수업 기록 (`sync.ts` = 동기화 규칙, 다중 접속 단위 테스트 포함)
 - `src/features/assignments` 문제 출제·과제 묶음·풀이(자동 채점)·현황표·피드백 (채점 규칙은 `src/go/problem/grader.ts`)
-- `src/data/` Supabase 읽기·쓰기 (판, 코멘트, 수업, 과제)
+- `src/features/library`, `src/features/submissions` 자료실(해설 기보·PDF·이미지), 기보 제출함
+- `src/data/` Supabase 읽기·쓰기 (판, 코멘트, 수업, 과제, 자료, 제출 기보)
 - `supabase/migrations/` DB 테이블·권한(RLS) SQL (적용 순서대로 번호)
 - `supabase/functions/manage-students/` 학생 계정 생성·비밀번호 변경·정지 (관리자 키는 서버 안에서만 사용)
 - `windows/` Windows용 실행 파일

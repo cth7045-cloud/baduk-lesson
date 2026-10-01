@@ -111,11 +111,39 @@
   color: var(--ink);
   border-color: var(--ink-3);
 }
-@media (max-width: 560px) {
-  .role {
+@media (max-width: 900px) {
+  .headerInner {
+    gap: 14px;
+  }
+  .nav {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar {
     display: none;
   }
   .nav a {
-    padding: 6px 6px;
+    flex-shrink: 0;
+    padding: 6px 7px;
   }
+  .user {
+    margin-left: 0;
+  }
+  .userName {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  .brand {
+    font-size: 0;
+    gap: 0;
+  }
+}
+
+.loading {
+  margin: 80px auto;
+  text-align: center;
+  color: var(--ink-3);
 }

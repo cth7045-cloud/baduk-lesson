@@ -1,19 +1,26 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
-import { AssignmentsPage } from './features/assignments/AssignmentsPage'
-import { AttemptPage } from './features/assignments/AttemptPage'
-import { ProblemEditorPage } from './features/assignments/ProblemEditorPage'
-import { SetPage } from './features/assignments/SetPage'
-import { SolvePage } from './features/assignments/SolvePage'
 import { AuthProvider, useAuth } from './features/auth/AuthProvider'
 import { LoginPage } from './features/auth/LoginPage'
 import { RequireAuth } from './features/auth/RequireAuth'
 import { HomePage } from './features/home/HomePage'
-import { LessonPage } from './features/lesson/LessonPage'
-import { LessonsPage } from './features/lesson/LessonsPage'
-import { PracticePage } from './features/practice/PracticePage'
-import { StudentsPage } from './features/students/StudentsPage'
 import { supabaseConfigured } from './lib/supabase'
 import s from './App.module.css'
+
+// 화면별로 필요할 때만 불러옴 (폰에서 처음 여는 속도를 위해)
+const AssignmentsPage = lazy(() => import('./features/assignments/AssignmentsPage').then((m) => ({ default: m.AssignmentsPage })))
+const AttemptPage = lazy(() => import('./features/assignments/AttemptPage').then((m) => ({ default: m.AttemptPage })))
+const ProblemEditorPage = lazy(() => import('./features/assignments/ProblemEditorPage').then((m) => ({ default: m.ProblemEditorPage })))
+const SetPage = lazy(() => import('./features/assignments/SetPage').then((m) => ({ default: m.SetPage })))
+const SolvePage = lazy(() => import('./features/assignments/SolvePage').then((m) => ({ default: m.SolvePage })))
+const LibraryPage = lazy(() => import('./features/library/LibraryPage').then((m) => ({ default: m.LibraryPage })))
+const MaterialPage = lazy(() => import('./features/library/MaterialPage').then((m) => ({ default: m.MaterialPage })))
+const LessonPage = lazy(() => import('./features/lesson/LessonPage').then((m) => ({ default: m.LessonPage })))
+const LessonsPage = lazy(() => import('./features/lesson/LessonsPage').then((m) => ({ default: m.LessonsPage })))
+const PracticePage = lazy(() => import('./features/practice/PracticePage').then((m) => ({ default: m.PracticePage })))
+const StudentsPage = lazy(() => import('./features/students/StudentsPage').then((m) => ({ default: m.StudentsPage })))
+const SubmissionPage = lazy(() => import('./features/submissions/SubmissionPage').then((m) => ({ default: m.SubmissionPage })))
+const SubmissionsPage = lazy(() => import('./features/submissions/SubmissionsPage').then((m) => ({ default: m.SubmissionsPage })))
 
 function Header() {
   const { profile, signOut } = useAuth()
@@ -38,6 +45,16 @@ function Header() {
           {profile && (
             <NavLink to="/assignments" className={link}>
               과제
+            </NavLink>
+          )}
+          {profile && (
+            <NavLink to="/library" className={link}>
+              자료실
+            </NavLink>
+          )}
+          {profile && (
+            <NavLink to="/submissions" className={link}>
+              {teacher ? '기보 제출함' : '내 기보'}
             </NavLink>
           )}
           {teacher && (
@@ -73,6 +90,7 @@ export function App() {
       <BrowserRouter>
         <Header />
         <main className={s.main}>
+          <Suspense fallback={<p className={s.loading}>불러오는 중…</p>}>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route
@@ -107,6 +125,10 @@ export function App() {
             <Route path="/assignments/:id" element={<RequireAuth><SetPage /></RequireAuth>} />
             <Route path="/assignments/:setId/solve/:problemId" element={<RequireAuth><SolvePage /></RequireAuth>} />
             <Route path="/attempts/:id" element={<RequireAuth><AttemptPage /></RequireAuth>} />
+            <Route path="/library" element={<RequireAuth><LibraryPage /></RequireAuth>} />
+            <Route path="/library/:id" element={<RequireAuth><MaterialPage /></RequireAuth>} />
+            <Route path="/submissions" element={<RequireAuth><SubmissionsPage /></RequireAuth>} />
+            <Route path="/submissions/:id" element={<RequireAuth><SubmissionPage /></RequireAuth>} />
             <Route path="/problems/:id" element={<RequireAuth role="teacher"><ProblemEditorPage /></RequireAuth>} />
             <Route
               path="/students"
@@ -131,6 +153,7 @@ export function App() {
             />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </Suspense>
         </main>
       </BrowserRouter>
     </AuthProvider>
