@@ -3,13 +3,14 @@
 바둑 과외 수업용 웹 프로그램입니다. 실시간 수업판, 과제, 자료실, 기보 제출함, 성장 기록을 한곳에서 씁니다.
 
 - **PC에서 켜는 방법**: [docs/WINDOWS_SETUP.md](docs/WINDOWS_SETUP.md)
+- **서버(Supabase) 설정**: [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md)
 - **설계 문서**: [docs/DESIGN.md](docs/DESIGN.md)
 
 ## 진행 상황
 | 단계 | 내용 | 상태 |
 |---|---|---|
-| 1 | 바둑판 컴포넌트 (규칙, 표시 도구, 변화도, 코멘트, SGF 입출력) | 완료 — 확인 대기 |
-| 2 | Supabase 연동 (로그인, 권한, DB) | |
+| 1 | 바둑판 컴포넌트 (규칙, 표시 도구, 변화도, 코멘트, SGF 입출력) | 완료 |
+| 2 | Supabase 연동 (로그인, 권한, DB) | 완료 — 선생님 계정 생성 대기 |
 | 3 | 실시간 수업방 | |
 | 4 | 과제 출제·자동 채점 | |
 | 5 | 자료실, 기보 제출함 | |
@@ -27,4 +28,7 @@ npm run build    # 배포용 빌드 (dist/)
 - `src/go/` 바둑 엔진: 규칙(따냄·자충·패), SGF 읽기/쓰기, 수순 트리. 화면과 분리되어 단위 테스트됨
 - `src/components/` 재사용 컴포넌트: 바둑판, 수순 트리, 코멘트 패널, 이를 묶은 `BoardWorkspace`
 - `src/features/` 화면별 기능 (1단계는 `practice` 연습판)
+- `src/features/auth`, `src/features/students` 로그인, 학생 관리
+- `supabase/migrations/` DB 테이블·권한(RLS) SQL (적용 순서대로 번호)
+- `supabase/functions/manage-students/` 학생 계정 생성·비밀번호 변경·정지 (관리자 키는 서버 안에서만 사용)
 - `windows/` Windows용 실행 파일

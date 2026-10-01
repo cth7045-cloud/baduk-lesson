@@ -6,6 +6,10 @@ cd /d "%~dp0.."
 where node >nul 2>nul
 if errorlevel 1 goto NO_NODE
 
+rem 서버 연결 정보(.env): 없으면 저장해 둔 것을 가져오고, 그것도 없으면 설정 창을 띄움
+if not exist ".env" if exist "%USERPROFILE%\baduk-lesson.env" copy /y "%USERPROFILE%\baduk-lesson.env" ".env" >nul
+if not exist ".env" call "%~dp0서버-연결-설정.bat"
+
 echo.
 echo  필요한 파일을 확인하고 있습니다. 처음 실행할 때는 1~3분 정도 걸립니다...
 echo.

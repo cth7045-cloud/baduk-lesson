@@ -207,3 +207,15 @@ SGF는 몇 KB 수준의 텍스트라 Storage가 아닌 `boards.sgf` 컬럼에 �
 | 4 | 문제 출제·자동 채점·과제 묶음·피드백·현황 | |
 | 5 | 자료실, 기보 제출함 | |
 | 6 | 성장 기록 페이지 | |
+
+---
+
+## 7. 2단계 구현 메모 (2026-10-01)
+
+- Supabase 프로젝트: `baduk-lesson` (ref `lmrqkstgdhxvwgypvktd`, 서울 ap-northeast-2, 무료 플랜)
+- 마이그레이션: `0001_schema`(테이블) → `0002_rls`(권한) → `0003_private_helpers`(권한 도우미 함수를 API에 노출되지 않는 `private` 스키마로 이동, Supabase 보안 점검 경고 0건)
+- 첫 계정 = 선생님: `auth.users` 에 처음 생기는 계정의 프로필은 자동으로 `teacher`. 이후 계정은 Edge Function이 `app_metadata.role = student` 로 만듦 (관리자 키로만 설정 가능한 값)
+- 학생 로그인 아이디 → 내부 이메일 `아이디@students.baduk.invalid` (`.invalid` 는 실제로 존재할 수 없는 주소라 재설정 메일 등이 외부로 나가지 않음)
+- Edge Function 관리자 키: 새 방식 `SUPABASE_SECRET_KEYS.default` 우선, 없으면 옛 `SUPABASE_SERVICE_ROLE_KEY` (옛 키는 2026년 말 종료)
+- 프론트엔드는 공개 키(`sb_publishable_…`)만 사용, `.env` 로 분리
+- 계정 정지: Auth ban + `profiles.is_active = false` (이미 로그인한 화면도 RLS가 막음)
