@@ -147,3 +147,14 @@
   text-align: center;
   color: var(--ink-3);
 }
+
+/* 인쇄할 때는 머리글 메뉴를 빼고 내용만 */
+@media print {
+  .header {
+    display: none;
+  }
+  .main {
+    max-width: none;
+    padding: 0;
+  }
+}

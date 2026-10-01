@@ -17,7 +17,7 @@ const TEACHER_ITEMS: Item[] = [
   { title: '자료실', desc: '해설 기보, PDF, 이미지를 올립니다.', to: '/library' },
   { title: '기보 제출함', desc: '학생이 올린 실전 기보에 코멘트를 답니다.', to: '/submissions' },
   { title: '학생 관리', desc: '학생 계정 만들기, 비밀번호 변경, 급수 기록.', to: '/students' },
-  { title: '성장 기록', desc: '학생별 정답률, 약점, 급수 변화.', stage: 6 },
+  { title: '성장 기록', desc: '학생별 정답률, 약점, 급수 변화, 상담 메모.', to: '/growth' },
   { title: '연습판', desc: '혼자 바둑판·코멘트·SGF 기능을 시험합니다.', to: '/practice' },
 ]
 
@@ -27,6 +27,7 @@ const STUDENT_ITEMS: Item[] = [
   { title: '과제', desc: '받은 문제를 풉니다.', to: '/assignments' },
   { title: '자료실', desc: '선생님이 올린 해설 기보와 자료를 봅니다.', to: '/library' },
   { title: '기보 제출', desc: '내 실전 기보를 올리고 선생님 코멘트를 봅니다.', to: '/submissions' },
+  { title: '성장 기록', desc: '과제 정답률과 급수 변화를 봅니다.', to: '/growth' },
 ]
 
 export function HomePage() {

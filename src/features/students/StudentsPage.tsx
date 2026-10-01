@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { Dialog } from '../../components/ui/Dialog'
 import { useToast } from '../../components/ui/Toast'
@@ -79,6 +80,9 @@ export function StudentsPage() {
                 아이디 <code>{st.login_id ?? '-'}</code>
               </div>
               <div className={s.actions}>
+                <Link to={`/growth/${st.id}`} className={s.growthLink}>
+                  성장 기록
+                </Link>
                 <Button size="small" variant="ghost" onClick={() => setDialog({ kind: 'edit', student: st })}>
                   이름·급수
                 </Button>

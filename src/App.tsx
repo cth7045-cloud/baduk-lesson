@@ -20,6 +20,8 @@ const LessonsPage = lazy(() => import('./features/lesson/LessonsPage').then((m) 
 const PracticePage = lazy(() => import('./features/practice/PracticePage').then((m) => ({ default: m.PracticePage })))
 const StudentsPage = lazy(() => import('./features/students/StudentsPage').then((m) => ({ default: m.StudentsPage })))
 const SubmissionPage = lazy(() => import('./features/submissions/SubmissionPage').then((m) => ({ default: m.SubmissionPage })))
+const GrowthIndexPage = lazy(() => import('./features/growth/GrowthPage').then((m) => ({ default: m.GrowthIndexPage })))
+const GrowthPage = lazy(() => import('./features/growth/GrowthPage').then((m) => ({ default: m.GrowthPage })))
 const SubmissionsPage = lazy(() => import('./features/submissions/SubmissionsPage').then((m) => ({ default: m.SubmissionsPage })))
 
 function Header() {
@@ -129,6 +131,8 @@ export function App() {
             <Route path="/library/:id" element={<RequireAuth><MaterialPage /></RequireAuth>} />
             <Route path="/submissions" element={<RequireAuth><SubmissionsPage /></RequireAuth>} />
             <Route path="/submissions/:id" element={<RequireAuth><SubmissionPage /></RequireAuth>} />
+            <Route path="/growth" element={<RequireAuth><GrowthIndexPage /></RequireAuth>} />
+            <Route path="/growth/:id" element={<RequireAuth><GrowthPage /></RequireAuth>} />
             <Route path="/problems/:id" element={<RequireAuth role="teacher"><ProblemEditorPage /></RequireAuth>} />
             <Route
               path="/students"

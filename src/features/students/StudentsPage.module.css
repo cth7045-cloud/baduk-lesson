@@ -135,3 +135,18 @@
   outline: none;
   border-color: var(--ink-2);
 }
+
+.growthLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 9px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+.growthLink:hover {
+  background: rgba(0, 0, 0, 0.05);
+}

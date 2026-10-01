@@ -66,3 +66,13 @@ button {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+@media print {
+  :root,
+  body {
+    background: #fff;
+  }
+  @page {
+    margin: 14mm;
+  }
+}
