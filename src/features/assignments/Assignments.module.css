@@ -1,0 +1,594 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.message {
+  margin: 80px auto;
+  text-align: center;
+  color: var(--ink-2);
+}
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.back {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.back:hover {
+  color: var(--ink);
+}
+.desc {
+  margin: 0 0 16px;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+}
+.muted {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.empty {
+  padding: 24px 4px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-3);
+}
+.error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+/* 탭 */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line-strong);
+}
+.tabs button {
+  margin-bottom: -1px;
+  padding: 9px 14px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.tabs .tabOn {
+  border-bottom-color: var(--ink);
+  color: var(--ink);
+}
+
+/* 목록 */
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+}
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 6px 18px;
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+a.row:hover {
+  background: rgba(0, 0, 0, 0.025);
+}
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.rowTitle {
+  font-weight: 700;
+}
+.rowSub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.rowTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.due {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.overdue {
+  color: var(--danger);
+}
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 150px;
+}
+.bar {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+.bar > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ok);
+}
+.progressText {
+  font-size: 13px;
+  color: var(--ink-2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 640px) {
+  .head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 태그 */
+.bankBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  padding: 4px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tagOn {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+.tagAdd {
+  border-style: dashed;
+}
+.tagSmall {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--line);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+/* 입력 */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.input,
+.textarea,
+.select {
+  padding: 0 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.input,
+.select {
+  height: 42px;
+}
+.select {
+  height: 34px;
+  font-size: 14px;
+}
+.textarea {
+  padding: 9px 11px;
+  resize: vertical;
+}
+.segment {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.segment button {
+  min-height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.segment .on {
+  background: var(--ink);
+  color: #fff;
+}
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink);
+  cursor: pointer;
+}
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ink);
+}
+
+/* 과제 묶음: 문제 고르기 */
+.pickList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.pickList li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 400;
+  color: var(--ink);
+}
+.pickList li:last-child {
+  border-bottom: none;
+}
+.pickList button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-2);
+}
+.pickList button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06);
+}
+.pickList button:disabled {
+  opacity: 0.3;
+}
+.pickNo {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--line);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.pickTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+}
+.addList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 150px;
+  overflow: auto;
+}
+.addList button {
+  padding: 5px 10px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.addList small {
+  color: var(--ink-3);
+}
+
+/* 학생: 문제 목록 */
+.solveRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 6px 14px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--line);
+}
+.state {
+  font-size: 14px;
+  white-space: nowrap;
+}
+.ok {
+  color: var(--ok);
+  font-weight: 700;
+}
+.ng {
+  color: var(--danger);
+}
+.solveActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.solveBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.feedback {
+  font-size: 13px;
+  color: var(--comment);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.feedbackNew {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--comment);
+  color: #fff;
+  font-weight: 700;
+}
+@media (max-width: 560px) {
+  .solveRow {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .solveActions {
+    grid-column: 2 / -1;
+  }
+}
+
+/* 선생님: 현황표 */
+.matrixWrap {
+  overflow-x: auto;
+}
+.matrix {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.matrix th,
+.matrix td {
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+  white-space: nowrap;
+}
+.matrix thead th {
+  border-bottom: 1px solid var(--line-strong);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.matrix thead a {
+  color: inherit;
+}
+.matrix tbody th {
+  text-align: left;
+  font-weight: 700;
+}
+.cellOk,
+.cellNg {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 38px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-weight: 800;
+  text-decoration: none;
+  line-height: 1.2;
+}
+.cellOk {
+  background: #e7f1e8;
+  color: var(--ok);
+}
+.cellNg {
+  background: var(--accent-soft);
+  color: var(--danger);
+}
+.cellOk small,
+.cellNg small {
+  font-size: 10px;
+  font-weight: 500;
+}
+.cellNone {
+  color: var(--ink-3);
+}
+.fbDot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  background: var(--comment);
+}
+.num {
+  font-weight: 700;
+}
+.legend {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* 문제 출제 화면 (오른쪽 열) */
+.editorHead {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.editorHead .back {
+  margin: 0;
+}
+.titleInput {
+  padding: 2px 6px;
+  margin-left: -6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  font-size: 19px;
+  font-weight: 800;
+}
+.titleInput:hover {
+  border-color: var(--line);
+}
+.titleInput:focus {
+  outline: none;
+  border-color: var(--ink-3);
+  background: var(--surface);
+}
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.markBox {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.markLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.markGood {
+  border-color: var(--ok) !important;
+  background: #e7f1e8 !important;
+  color: var(--ok);
+}
+.markBad {
+  border-color: var(--danger) !important;
+  background: var(--accent-soft) !important;
+  color: var(--danger);
+}
+.summary {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.guide {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.guide summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.guide ol {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+.guideText {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.previewWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.previewBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--comment);
+  background: #eaf0f8;
+  font-size: 14px;
+  color: #22426b;
+}
+.solvePage {
+  display: flex;
+  flex-direction: column;
+}

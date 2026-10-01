@@ -1,4 +1,9 @@
 import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { AssignmentsPage } from './features/assignments/AssignmentsPage'
+import { AttemptPage } from './features/assignments/AttemptPage'
+import { ProblemEditorPage } from './features/assignments/ProblemEditorPage'
+import { SetPage } from './features/assignments/SetPage'
+import { SolvePage } from './features/assignments/SolvePage'
 import { AuthProvider, useAuth } from './features/auth/AuthProvider'
 import { LoginPage } from './features/auth/LoginPage'
 import { RequireAuth } from './features/auth/RequireAuth'
@@ -28,6 +33,11 @@ function Header() {
           {profile && (
             <NavLink to="/lessons" className={link}>
               수업
+            </NavLink>
+          )}
+          {profile && (
+            <NavLink to="/assignments" className={link}>
+              과제
             </NavLink>
           )}
           {teacher && (
@@ -93,6 +103,11 @@ export function App() {
                 </RequireAuth>
               }
             />
+            <Route path="/assignments" element={<RequireAuth><AssignmentsPage /></RequireAuth>} />
+            <Route path="/assignments/:id" element={<RequireAuth><SetPage /></RequireAuth>} />
+            <Route path="/assignments/:setId/solve/:problemId" element={<RequireAuth><SolvePage /></RequireAuth>} />
+            <Route path="/attempts/:id" element={<RequireAuth><AttemptPage /></RequireAuth>} />
+            <Route path="/problems/:id" element={<RequireAuth role="teacher"><ProblemEditorPage /></RequireAuth>} />
             <Route
               path="/students"
               element={

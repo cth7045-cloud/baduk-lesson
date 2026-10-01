@@ -75,3 +75,16 @@
   stroke: #fff;
   stroke-width: 1.5;
 }
+
+/* 문제: 정답(TE) · 오답(BM) 표시 */
+.good {
+  fill: none;
+  stroke: var(--ok);
+  stroke-width: 2.5;
+}
+.bad {
+  fill: none;
+  stroke: var(--danger);
+  stroke-width: 2.5;
+  stroke-dasharray: 3 2;
+}

@@ -1,0 +1,171 @@
+.layout {
+  --side: 360px;
+  --board: min(calc(100dvh - var(--header-h) - 40px), calc(100vw - var(--side) - 20px - 32px));
+  display: grid;
+  grid-template-columns: max(380px, var(--board)) var(--side);
+  justify-content: center;
+  align-items: start;
+  gap: 20px;
+}
+.boardArea {
+  position: sticky;
+  top: calc(var(--header-h) + 10px);
+  min-width: 0;
+}
+.boardBox {
+  position: relative;
+}
+.hint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(29, 28, 26, 0.86);
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hintTop {
+  top: 10px;
+}
+.hintBottom {
+  bottom: 10px;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.problemHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.turn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.dotB,
+.dotW {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+.dotB {
+  background: #1d1c1a;
+}
+.dotW {
+  background: #fff;
+  border: 1px solid #777;
+}
+
+.memo {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 16px;
+}
+.note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 92px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 15px;
+}
+.result p {
+  margin: 0;
+}
+.big {
+  font-size: 19px;
+  font-weight: 800;
+}
+.playing,
+.thinking {
+  border-left-color: var(--line-strong);
+  color: var(--ink-2);
+}
+.solved {
+  border-left-color: var(--ok);
+  background: #eef5ef;
+}
+.solved .big {
+  color: var(--ok);
+}
+.wrong,
+.unexpected {
+  border-left-color: var(--danger);
+  background: var(--accent-soft);
+}
+.wrong .big,
+.unexpected .big {
+  color: var(--danger);
+}
+.comment {
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--ink);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.actions > * {
+  min-height: 42px;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .boardArea {
+    position: static;
+    order: 2;
+  }
+  .side {
+    display: contents;
+  }
+  .problemHead,
+  .memo,
+  .note {
+    order: 1;
+  }
+  .result,
+  .actions {
+    order: 3;
+  }
+}
+@media (max-width: 600px) {
+  .boardArea {
+    margin: 0 -12px;
+  }
+}

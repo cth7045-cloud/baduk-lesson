@@ -57,7 +57,9 @@ export const GoBoard = memo(function GoBoard({
   const down = useRef<{ x: number; y: number; type: string } | null>(null)
   const [hover, setHover] = useState<Point | null>(null)
 
-  const pad = showCoords ? S * 0.88 : S * 0.56
+  // 좌표 글자가 가장자리 돌에 가리지 않을 만큼만 여백을 둠
+  const pad = showCoords ? S * 1.0 : S * 0.56
+  const label = S * 0.3
   const full = (size - 1) * S + pad * 2
   const pos = (i: number) => pad + i * S
   const interactive = !!onPointClick
@@ -182,19 +184,19 @@ export const GoBoard = memo(function GoBoard({
 
         {/* 좌표 */}
         {showCoords && (
-          <g className={s.coords} fontSize={S * 0.34} fill="#4a3a22" textAnchor="middle">
+          <g className={s.coords} fontSize={S * 0.31} fill="#4a3a22" textAnchor="middle">
             {Array.from({ length: size }, (_, i) => (
               <g key={`c${i}`}>
-                <text x={pos(i)} y={pad * 0.42} dominantBaseline="central">
+                <text x={pos(i)} y={label} dominantBaseline="central">
                   {displayColumnLabel(i)}
                 </text>
-                <text x={pos(i)} y={full - pad * 0.42} dominantBaseline="central">
+                <text x={pos(i)} y={full - label} dominantBaseline="central">
                   {displayColumnLabel(i)}
                 </text>
-                <text x={pad * 0.42} y={pos(i)} dominantBaseline="central">
+                <text x={label} y={pos(i)} dominantBaseline="central">
                   {size - i}
                 </text>
-                <text x={full - pad * 0.42} y={pos(i)} dominantBaseline="central">
+                <text x={full - label} y={pos(i)} dominantBaseline="central">
                   {size - i}
                 </text>
               </g>

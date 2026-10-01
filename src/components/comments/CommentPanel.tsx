@@ -21,6 +21,8 @@ interface Props {
   onCoordClick?: (p: Point) => void
   /** 바깥에서 "코멘트 입력칸으로 이동" 요청 (Enter 단축키) */
   focusSignal?: number
+  /** "판 전체 메모" 대신 쓸 제목 (예: 문제에서는 "문제 설명") */
+  memoLabel?: string
 }
 
 /** 바둑판 옆(PC)·아래(모바일)에 붙는 코멘트 패널. 모든 화면에서 재사용 */
@@ -54,7 +56,7 @@ export function CommentPanel(props: Props) {
 
       <section className={`${s.section} ${s.memoSection}`} aria-label="판 전체 메모">
         <header className={s.sectionHead}>
-          <span className={s.sectionTitle}>판 전체 메모</span>
+          <span className={s.sectionTitle}>{props.memoLabel ?? '판 전체 메모'}</span>
         </header>
         {props.sourceMemo && <SourceNote body={props.sourceMemo} boardSize={boardSize} onCoordClick={onCoordClick} />}
         <CommentBlock
@@ -64,8 +66,8 @@ export function CommentPanel(props: Props) {
           canEdit={canEdit}
           actions={actions}
           drafts={drafts.current}
-          placeholder="이 판 전체에 대한 요약·총평 · Enter 저장"
-          emptyText="판 전체 메모가 없습니다."
+          placeholder={props.memoLabel ? `${props.memoLabel} 입력 · Enter 저장` : '이 판 전체에 대한 요약·총평 · Enter 저장'}
+          emptyText={props.memoLabel ? `${props.memoLabel}이(가) 없습니다.` : '판 전체 메모가 없습니다.'}
           onCoordClick={onCoordClick}
         />
       </section>

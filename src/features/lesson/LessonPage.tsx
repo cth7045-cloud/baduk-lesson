@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useGameEditor, type GameEditor } from '../../components/board/useGameEditor'
-import type { CommentActions, CommentMap } from '../../components/comments/types'
+import type { GameEditor } from '../../components/board/useGameEditor'
+import type { CommentMap } from '../../components/comments/types'
 import { formatDateTime } from '../../components/comments/format'
 import { Button } from '../../components/ui/Button'
 import { useToast } from '../../components/ui/Toast'
@@ -9,11 +9,12 @@ import { BoardWorkspace } from '../../components/workspace/BoardWorkspace'
 import { newGame } from '../../go/sgf/convert'
 import type { GameTree } from '../../go/tree/gameTree'
 import type { TreeOp } from '../../go/tree/ops'
-import { loadBoard, saveBoardTree } from '../../data/boards'
-import { deleteComment, listComments, replaceAllComments, saveComment, subscribeComments } from '../../data/comments'
+import { loadBoard } from '../../data/boards'
+import { listComments, replaceAllComments } from '../../data/comments'
 import { getLesson, subscribeLesson, updateLesson, type ControlMode, type LessonWithPeople } from '../../data/lessons'
 import { downloadSgfWithComments, readSgfFile } from '../../lib/sgfFile'
 import { useAuth } from '../auth/AuthProvider'
+import { saveStateLabel, useBoardDocument } from '../boards/useBoardDocument'
 import { useLessonChannel } from './useLessonChannel'
 import s from './Lesson.module.css'
 
@@ -61,8 +62,6 @@ function LessonRoom({ initial }: { initial: Loaded }) {
   const { profile } = useAuth()
   const isTeacher = profile?.role === 'teacher'
   const [lesson, setLesson] = useState(initial.lesson)
-  const [comments, setComments] = useState<CommentMap>(initial.comments)
-  const [saveState, setSaveState] = useState<'saved' | 'saving' | 'error'>('saved')
   const [following, setFollowing] = useState(true)
   const toast = useToast()
   const fileRef = useRef<HTMLInputElement>(null)
@@ -71,7 +70,14 @@ function LessonRoom({ initial }: { initial: Loaded }) {
 
   // 내 편집 → 채널로 전송 (채널 훅이 아래에서 만들어지므로 참조로 연결)
   const sendOpsRef = useRef<(ops: TreeOp[], nodeId?: string) => void>(() => {})
-  const editor = useGameEditor(initial.tree, (ops, nodeId) => sendOpsRef.current(ops, nodeId))
+  const { editor, comments, setComments, commentActions, saveState, flush } = useBoardDocument({
+    boardId,
+    initialTree: initial.tree,
+    initialComments: initial.comments,
+    autosave: isTeacher,
+    onOps: (ops, nodeId) => sendOpsRef.current(ops, nodeId),
+    onError: (m) => toast.show(m),
+  })
 
   const me = useMemo(
     () => ({ id: profile?.id ?? '', name: profile?.display_name ?? '', role: isTeacher ? ('teacher' as const) : ('student' as const) }),
@@ -97,84 +103,6 @@ function LessonRoom({ initial }: { initial: Loaded }) {
     () => subscribeLesson(lesson.id, (row) => setLesson((l) => ({ ...l, ...row }))),
     [lesson.id],
   )
-
-  // ---------- 코멘트 실시간 반영 ----------
-  useEffect(
-    () =>
-      subscribeComments(boardId, {
-        upsert: (c) => setComments((prev) => ({ ...prev, [c.key]: c })),
-        remove: (key) =>
-          setComments((prev) => {
-            if (!prev[key]) return prev
-            const next = { ...prev }
-            delete next[key]
-            return next
-          }),
-      }),
-    [boardId],
-  )
-
-  const commentActions: CommentActions = useMemo(
-    () => ({
-      save: async (key, body) => {
-        try {
-          const c = await saveComment(boardId, key, body)
-          setComments((prev) => ({ ...prev, [key]: c }))
-        } catch (e) {
-          toast.show(`코멘트를 저장하지 못했습니다: ${(e as Error).message}`)
-          throw e
-        }
-      },
-      remove: async (key) => {
-        try {
-          await deleteComment(boardId, key)
-          setComments((prev) => {
-            const next = { ...prev }
-            delete next[key]
-            return next
-          })
-        } catch (e) {
-          toast.show(`코멘트를 지우지 못했습니다: ${(e as Error).message}`)
-          throw e
-        }
-      },
-    }),
-    [boardId, toast],
-  )
-
-  // ---------- 선생님: 판 자동 저장 ----------
-  const lastSaved = useRef(initial.tree)
-  const editorTreeRef = useRef(editor.tree)
-  editorTreeRef.current = editor.tree
-  const saveNow = useCallback(async () => {
-    const tree = editorTreeRef.current
-    if (tree === lastSaved.current) return
-    setSaveState('saving')
-    try {
-      await saveBoardTree(boardId, tree)
-      lastSaved.current = tree
-      setSaveState('saved')
-    } catch {
-      setSaveState('error')
-    }
-  }, [boardId])
-  useEffect(() => {
-    if (!isTeacher || editor.tree === lastSaved.current) return
-    const t = window.setTimeout(() => void saveNow(), 1500)
-    return () => window.clearTimeout(t)
-  }, [editor.tree, isTeacher, saveNow])
-  // 창을 닫기 전 저장되지 않은 내용이 있으면 경고
-  useEffect(() => {
-    if (!isTeacher) return
-    const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (editorTreeRef.current !== lastSaved.current) {
-        void saveNow()
-        e.preventDefault()
-      }
-    }
-    window.addEventListener('beforeunload', onBeforeUnload)
-    return () => window.removeEventListener('beforeunload', onBeforeUnload)
-  }, [isTeacher, saveNow])
 
   // ---------- 선생님: 보고 있는 수 알리기 ----------
   useEffect(() => {
@@ -228,8 +156,7 @@ function LessonRoom({ initial }: { initial: Loaded }) {
   async function endLesson() {
     if (!window.confirm('수업을 끝낼까요?\n판과 코멘트가 오늘 날짜의 수업 기록으로 저장되고, 학생들은 복습 화면으로 바뀝니다.')) return
     try {
-      await saveBoardTree(boardId, editor.tree)
-      lastSaved.current = editor.tree
+      await flush()
       const endedAt = new Date().toISOString()
       await updateLesson(lesson.id, { status: 'ended', ended_at: endedAt })
       channel.sendEnded()
@@ -391,11 +318,7 @@ function LessonRoom({ initial }: { initial: Loaded }) {
         canEditComments={isTeacher}
         canEditBoard={canEditBoard}
         aside={
-          isTeacher && (
-            <span className={s.saveState}>
-              {saveState === 'saving' ? '저장 중…' : saveState === 'error' ? '저장 실패 — 인터넷 확인' : '자동 저장됨'}
-            </span>
-          )
+          isTeacher && <span className={s.saveState}>{saveStateLabel(saveState)}</span>
         }
       />
       {toast.node}

@@ -66,7 +66,7 @@ export const MoveTree = memo(function MoveTree({ tree, currentId, commentedIds, 
     let shape: ReactElement
     if (mv) {
       const n = moveNumber(tree, id)
-      title = `${n}수 ${mv.color === 'B' ? '흑' : '백'} ${mv.point ? toDisplay(mv.point, tree.size) : '한 수 쉼'}`
+      title = `${n}수 ${mv.color === 'B' ? '흑' : '백'} ${mv.point ? toDisplay(mv.point, tree.size) : '한 수 쉼'}${node.props.TE ? ' (정답)' : ''}${node.props.BM ? ' (오답)' : ''}`
       shape = (
         <>
           <circle cx={x} cy={y} r={R} className={mv.color === 'B' ? s.black : s.white} />
@@ -88,6 +88,8 @@ export const MoveTree = memo(function MoveTree({ tree, currentId, commentedIds, 
         <circle cx={x} cy={y} r={R + 4} fill="transparent" />
         {isCurrent && <circle cx={x} cy={y} r={R + 3.5} className={s.current} />}
         {shape}
+        {node.props.TE && <circle cx={x} cy={y} r={R + 3.5} className={s.good} />}
+        {node.props.BM && <circle cx={x} cy={y} r={R + 3.5} className={s.bad} />}
         {commented && <circle cx={x + R * 0.78} cy={y - R * 0.78} r={3.6} className={s.badge} />}
       </g>,
     )

@@ -69,6 +69,8 @@ export interface BoardWorkspaceProps {
   aside?: ReactNode
   /** 화면 제목·버튼 줄. PC에서는 오른쪽 열 맨 위, 폰에서는 맨 위에 놓임 */
   header?: ReactNode
+  /** 코멘트 패널의 "판 전체 메모" 제목 바꾸기 */
+  memoLabel?: string
 }
 
 /**
@@ -85,6 +87,7 @@ export function BoardWorkspace({
   sourceMemo,
   aside,
   header,
+  memoLabel,
 }: BoardWorkspaceProps) {
   const { tree, currentId } = editor
   const [tool, setTool] = useState<Tool>('play')
@@ -374,6 +377,7 @@ export function BoardWorkspace({
           actions={commentActions}
           onCoordClick={onCoordClick}
           focusSignal={focusSignal}
+          memoLabel={memoLabel}
         />
       </div>
 

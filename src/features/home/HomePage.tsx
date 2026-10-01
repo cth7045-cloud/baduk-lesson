@@ -13,7 +13,7 @@ interface Item {
 const TEACHER_ITEMS: Item[] = [
   { title: '수업방', desc: '실시간 수업판을 열고 학생과 함께 둡니다.', to: '/lessons' },
   { title: '수업 기록', desc: '지난 수업을 날짜별로 다시 보고 코멘트를 고칩니다.', to: '/lessons' },
-  { title: '과제', desc: '사활·수읽기 문제를 만들고 학생에게 배정합니다.', stage: 4 },
+  { title: '과제', desc: '사활·수읽기 문제를 만들고 학생에게 배정합니다.', to: '/assignments' },
   { title: '자료실', desc: '해설 기보, PDF, 이미지를 올립니다.', stage: 5 },
   { title: '기보 제출함', desc: '학생이 올린 실전 기보에 코멘트를 답니다.', stage: 5 },
   { title: '학생 관리', desc: '학생 계정 만들기, 비밀번호 변경, 급수 기록.', to: '/students' },
@@ -24,7 +24,7 @@ const TEACHER_ITEMS: Item[] = [
 const STUDENT_ITEMS: Item[] = [
   { title: '수업', desc: '선생님이 연 수업방에 들어갑니다.', to: '/lessons' },
   { title: '수업 기록', desc: '지난 수업을 코멘트와 함께 복습합니다.', to: '/lessons' },
-  { title: '과제', desc: '받은 문제를 풉니다.', stage: 4 },
+  { title: '과제', desc: '받은 문제를 풉니다.', to: '/assignments' },
   { title: '자료실', desc: '선생님이 올린 해설 기보와 자료를 봅니다.', stage: 5 },
   { title: '기보 제출', desc: '내 실전 기보를 올리고 선생님 코멘트를 봅니다.', stage: 5 },
 ]

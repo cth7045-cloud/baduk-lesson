@@ -87,6 +87,11 @@
   background: var(--surface);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
+.wide {
+  max-width: 560px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
 .dialog h2 {
   margin: 0 0 6px;
   font-size: 17px;
