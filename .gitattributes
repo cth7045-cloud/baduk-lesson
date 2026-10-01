@@ -1,0 +1,6 @@
+* text=auto
+# Windows 실행 파일은 줄바꿈(CRLF)과 인코딩을 그대로 보존 (GitHub ZIP 다운로드에서도 안전하도록)
+*.bat -text
+*.cmd -text
+*.ps1 -text
+*.ico binary

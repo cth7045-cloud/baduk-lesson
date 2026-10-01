@@ -1,0 +1,302 @@
+.layout {
+  display: grid;
+  grid-template-columns: auto minmax(300px, 380px);
+  justify-content: center;
+  align-items: start;
+  gap: 20px;
+}
+
+.boardCol {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  /* 화면 높이·너비에 맞춰 판 크기 결정 (도구 막대·이동 버튼·코멘트 패널 공간 제외) */
+  width: max(380px, min(calc(100vw - 48px - 20px - 360px), calc(100dvh - var(--header-h) - 210px)));
+}
+
+.sideCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  position: sticky;
+  top: calc(var(--header-h) + 12px);
+}
+
+/* 태블릿 세로·폰: 한 줄로 쌓기 (판 → 이동 → 코멘트 → 수순) */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+  .boardCol {
+    width: min(100%, 720px);
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .sideCol {
+    position: static;
+    width: min(100%, 720px);
+    margin: 0 auto;
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.toolGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.tool {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 34px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+}
+.tool:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.toolOn,
+.toolOn:hover {
+  background: var(--ink);
+  color: #fff;
+}
+.toolOn svg circle[fill='#fff'] {
+  fill: var(--ink);
+  stroke: #fff;
+}
+.textTool {
+  height: 34px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+.textTool:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--ink);
+}
+.dangerText {
+  color: var(--danger);
+}
+
+.boardBox {
+  position: relative;
+}
+.hint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(29, 28, 26, 0.86);
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hintTop {
+  top: 10px;
+}
+.hintBottom {
+  bottom: 10px;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+.navButtons {
+  display: flex;
+  gap: 4px;
+}
+.navBtn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}
+.navBig {
+  width: 52px;
+}
+.navBtn:hover:not(:disabled) {
+  border-color: var(--ink-3);
+}
+.navBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.moveNo {
+  font-weight: 700;
+  color: var(--ink);
+}
+.toPlay {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.dotB,
+.dotW {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.dotB {
+  background: #1d1c1a;
+}
+.dotW {
+  background: #fff;
+  border: 1px solid #777;
+}
+.caps {
+  color: var(--ink-3);
+}
+
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.switch {
+  position: relative;
+  width: 30px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--line-strong);
+  transition: background 0.15s;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s;
+}
+.toggle input:checked + .switch {
+  background: var(--ink);
+}
+.toggle input:checked + .switch::after {
+  transform: translateX(12px);
+}
+.toggle input:focus-visible + .switch {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.aside {
+  margin-left: auto;
+}
+
+.treeBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.treeHead {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  min-height: 34px;
+}
+.treeTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.variation {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.varBtn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+}
+.varBtn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
+.varBtn:disabled {
+  opacity: 0.3;
+}
+.treeActions {
+  display: flex;
+  margin-left: auto;
+}
+
+@media (max-width: 480px) {
+  .navBtn {
+    width: 38px;
+  }
+  .navBig {
+    width: 48px;
+  }
+  .status {
+    gap: 10px;
+    font-size: 13px;
+  }
+}

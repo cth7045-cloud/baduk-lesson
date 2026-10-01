@@ -1,0 +1,77 @@
+.scroll {
+  overflow: auto;
+  max-height: 220px;
+  min-height: 70px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.svg {
+  display: block;
+  font-family: inherit;
+}
+
+.edge {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+}
+.edgeOn {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 2;
+}
+
+.node {
+  cursor: pointer;
+}
+.node:hover .black,
+.node:hover .white,
+.node:hover .setup {
+  stroke: var(--accent);
+}
+
+.black {
+  fill: #1d1c1a;
+  stroke: #1d1c1a;
+  stroke-width: 1;
+}
+.white {
+  fill: #fff;
+  stroke: #6f6a61;
+  stroke-width: 1;
+}
+.setup {
+  fill: var(--surface-2);
+  stroke: var(--ink-3);
+  stroke-width: 1.2;
+}
+
+.numB,
+.numW {
+  text-anchor: middle;
+  font-weight: 600;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.numB {
+  fill: #fff;
+}
+.numW {
+  fill: #1d1c1a;
+}
+
+.current {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+
+.badge {
+  fill: var(--comment);
+  stroke: #fff;
+  stroke-width: 1.5;
+}

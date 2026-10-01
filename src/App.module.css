@@ -1,0 +1,83 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--header-h);
+  border-bottom: 1px solid var(--line);
+  background: rgba(244, 242, 237, 0.94);
+  backdrop-filter: saturate(1.2) blur(6px);
+}
+.headerInner {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.logo {
+  position: relative;
+  width: 22px;
+  height: 16px;
+}
+.logo span {
+  position: absolute;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+.logo span:first-child {
+  left: 0;
+  background: var(--ink);
+}
+.logo span:last-child {
+  left: 7px;
+  background: #fff;
+  border: 1.5px solid var(--ink);
+}
+.nav {
+  display: flex;
+  gap: 4px;
+}
+.nav a {
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.nav a:hover {
+  color: var(--ink);
+  background: rgba(0, 0, 0, 0.04);
+}
+.nav a.active {
+  color: var(--ink);
+  font-weight: 700;
+}
+.main {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 18px 24px 48px;
+}
+@media (max-width: 600px) {
+  .headerInner {
+    padding: 0 16px;
+    gap: 16px;
+  }
+  .main {
+    padding: 14px 12px 40px;
+  }
+}
