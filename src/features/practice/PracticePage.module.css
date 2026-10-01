@@ -6,17 +6,15 @@
 
 .bar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
 }
 
 .title {
   min-width: 0;
-  flex: 1 1 200px;
-  max-width: 420px;
-  padding: 4px 6px;
+  width: 100%;
+  padding: 2px 6px;
   margin-left: -6px;
   border: 1px solid transparent;
   border-radius: var(--radius);
@@ -42,7 +40,6 @@
 
 .viewSwitch {
   display: inline-flex;
-  margin-left: 6px;
   padding: 2px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
@@ -63,7 +60,7 @@
 }
 
 .notice {
-  margin: 0;
+  margin: 10px 0 0;
   padding: 9px 12px;
   border-left: 3px solid var(--comment);
   background: #eaf0f8;

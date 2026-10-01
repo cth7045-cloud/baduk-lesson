@@ -12,7 +12,7 @@
   align-items: center;
   gap: 28px;
   height: 100%;
-  max-width: 1360px;
+  max-width: 1640px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -68,7 +68,7 @@
   font-weight: 700;
 }
 .main {
-  max-width: 1360px;
+  max-width: 1640px;
   margin: 0 auto;
   padding: 18px 24px 48px;
 }

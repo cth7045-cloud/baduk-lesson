@@ -57,7 +57,7 @@ export const GoBoard = memo(function GoBoard({
   const down = useRef<{ x: number; y: number; type: string } | null>(null)
   const [hover, setHover] = useState<Point | null>(null)
 
-  const pad = showCoords ? S * 1.1 : S * 0.62
+  const pad = showCoords ? S * 0.88 : S * 0.56
   const full = (size - 1) * S + pad * 2
   const pos = (i: number) => pad + i * S
   const interactive = !!onPointClick
@@ -182,7 +182,7 @@ export const GoBoard = memo(function GoBoard({
 
         {/* 좌표 */}
         {showCoords && (
-          <g className={s.coords} fontSize={S * 0.36} fill="#4a3a22" textAnchor="middle">
+          <g className={s.coords} fontSize={S * 0.34} fill="#4a3a22" textAnchor="middle">
             {Array.from({ length: size }, (_, i) => (
               <g key={`c${i}`}>
                 <text x={pos(i)} y={pad * 0.42} dominantBaseline="central">

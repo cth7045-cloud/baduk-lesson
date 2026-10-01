@@ -65,8 +65,10 @@ export interface BoardWorkspaceProps {
   /** 학생이 올린 기보의 원본 메모 (노드 ID → 글) */
   sourceNotes?: Record<string, string>
   sourceMemo?: string
-  /** 판 위쪽 오른편에 추가로 넣을 내용 (예: 저장 상태) */
+  /** 스위치 줄 끝에 넣을 내용 (예: 저장 상태) */
   aside?: ReactNode
+  /** 화면 제목·버튼 줄. PC에서는 오른쪽 열 맨 위, 폰에서는 맨 위에 놓임 */
+  header?: ReactNode
 }
 
 /**
@@ -82,6 +84,7 @@ export function BoardWorkspace({
   sourceNotes,
   sourceMemo,
   aside,
+  header,
 }: BoardWorkspaceProps) {
   const { tree, currentId } = editor
   const [tool, setTool] = useState<Tool>('play')
@@ -253,8 +256,9 @@ export function BoardWorkspace({
 
   return (
     <div className={s.layout}>
-      <div className={s.boardCol}>
-        {canEditBoard && (
+      {header && <div className={s.areaHead}>{header}</div>}
+      {canEditBoard && (
+        <div className={s.areaTools}>
           <div className={s.toolbar} role="toolbar" aria-label="바둑판 도구">
             {[0, 1].map((g) => (
               <div key={g} className={s.toolGroup}>
@@ -289,8 +293,10 @@ export function BoardWorkspace({
               </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
+      <div className={s.areaBoard}>
         <div className={s.boardBox}>
           <GoBoard
             board={board}
@@ -319,7 +325,9 @@ export function BoardWorkspace({
             </div>
           )}
         </div>
+      </div>
 
+      <div className={s.areaNav}>
         <div className={s.nav}>
           <div className={s.navButtons}>
             <NavBtn label="처음으로" onClick={editor.first} disabled={!editor.canBack} icon={<Icon.first />} />
@@ -354,7 +362,7 @@ export function BoardWorkspace({
         </div>
       </div>
 
-      <div className={s.sideCol}>
+      <div className={s.areaComments}>
         <CommentPanel
           boardSize={tree.size}
           nodeId={currentId}
@@ -367,7 +375,9 @@ export function BoardWorkspace({
           onCoordClick={onCoordClick}
           focusSignal={focusSignal}
         />
+      </div>
 
+      <div className={s.areaTree}>
         <div className={s.treeBlock}>
           <div className={s.treeHead}>
             <span className={s.treeTitle}>수순</span>

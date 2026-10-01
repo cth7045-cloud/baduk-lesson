@@ -1,44 +1,91 @@
+/*
+ * 배치
+ *  - PC·태블릿 가로: 왼쪽은 판만 크게, 오른쪽 열에 도구·이동·코멘트·수순
+ *  - 폰·태블릿 세로: 도구 → 판 → 이동 → 코멘트 → 수순 순서로 한 줄
+ */
 .layout {
+  --side: 380px;
+  /* 판 한 변: 화면 높이에서 머리글·제목줄만 뺀 크기 (너비가 모자라면 너비 기준) */
+  --board: min(
+    calc(100dvh - var(--header-h) - var(--page-chrome, 40px)),
+    calc(100vw - var(--side) - 20px - 32px)
+  );
   display: grid;
-  grid-template-columns: auto minmax(300px, 380px);
+  grid-template-columns: max(420px, var(--board)) var(--side);
+  grid-template-rows: auto auto auto auto auto 1fr;
+  grid-template-areas:
+    'board head'
+    'board tools'
+    'board nav'
+    'board comments'
+    'board tree'
+    'board .';
   justify-content: center;
   align-items: start;
-  gap: 20px;
+  gap: 12px 20px;
 }
 
-.boardCol {
+.areaHead {
+  grid-area: head;
+  min-width: 0;
+}
+.areaTools {
+  grid-area: tools;
+  min-width: 0;
+}
+.areaBoard {
+  grid-area: board;
+  min-width: 0;
+  position: sticky;
+  top: calc(var(--header-h) + 10px);
+}
+.areaNav {
+  grid-area: nav;
   display: flex;
   flex-direction: column;
   gap: 10px;
   min-width: 0;
-  /* 화면 높이·너비에 맞춰 판 크기 결정 (도구 막대·이동 버튼·코멘트 패널 공간 제외) */
-  width: max(380px, min(calc(100vw - 48px - 20px - 360px), calc(100dvh - var(--header-h) - 210px)));
 }
-
-.sideCol {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.areaComments {
+  grid-area: comments;
   min-width: 0;
-  position: sticky;
-  top: calc(var(--header-h) + 12px);
+}
+.areaTree {
+  grid-area: tree;
+  min-width: 0;
 }
 
-/* 태블릿 세로·폰: 한 줄로 쌓기 (판 → 이동 → 코멘트 → 수순) */
 @media (max-width: 900px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
+    grid-template-rows: none;
+    grid-template-areas:
+      'head'
+      'tools'
+      'board'
+      'nav'
+      'comments'
+      'tree';
+    gap: 12px;
   }
-  .boardCol {
-    width: min(100%, 720px);
-    max-width: 100%;
-    margin: 0 auto;
-  }
-  .sideCol {
+  .areaBoard {
     position: static;
-    width: min(100%, 720px);
+  }
+  .areaHead,
+  .areaTools,
+  .areaNav,
+  .areaComments,
+  .areaTree {
+    width: 100%;
+    max-width: 760px;
     margin: 0 auto;
+  }
+}
+
+/* 폰: 판을 화면 좌우 끝까지 */
+@media (max-width: 600px) {
+  .areaBoard {
+    margin: 0 -12px;
   }
 }
 

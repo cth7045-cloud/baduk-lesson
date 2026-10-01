@@ -142,43 +142,46 @@ export function PracticePage() {
 
   return (
     <div className={s.page}>
-      <div className={s.bar}>
-        <input
-          className={s.title}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          aria-label="판 이름"
-          maxLength={80}
-        />
-        <div className={s.actions}>
-          <Button size="small" onClick={() => setNewOpen(true)}>
-            새 판
-          </Button>
-          <Button size="small" onClick={() => fileRef.current?.click()}>
-            SGF 불러오기
-          </Button>
-          <Button size="small" onClick={onExport}>
-            SGF 내보내기
-          </Button>
-          <input ref={fileRef} type="file" accept=".sgf,application/x-go-sgf,text/plain" hidden onChange={onFile} />
-          <div className={s.viewSwitch} role="group" aria-label="화면 보기">
-            <button type="button" className={!studentView ? s.on : ''} onClick={() => setStudentView(false)}>
-              선생님 화면
-            </button>
-            <button type="button" className={studentView ? s.on : ''} onClick={() => setStudentView(true)}>
-              학생 화면
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {studentView && (
-        <p className={s.notice}>
-          학생 화면 미리보기입니다. 학생은 코멘트를 읽기만 할 수 있고, 판을 고칠 수 없습니다.
-        </p>
-      )}
-
       <BoardWorkspace
+        header={
+          <>
+            <div className={s.bar}>
+              <input
+                className={s.title}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                aria-label="판 이름"
+                maxLength={80}
+              />
+              <div className={s.actions}>
+                <Button size="small" onClick={() => setNewOpen(true)}>
+                  새 판
+                </Button>
+                <Button size="small" onClick={() => fileRef.current?.click()}>
+                  SGF 불러오기
+                </Button>
+                <Button size="small" onClick={onExport}>
+                  SGF 내보내기
+                </Button>
+                <input ref={fileRef} type="file" accept=".sgf,application/x-go-sgf,text/plain" hidden onChange={onFile} />
+                <div className={s.viewSwitch} role="group" aria-label="화면 보기">
+                  <button type="button" className={!studentView ? s.on : ''} onClick={() => setStudentView(false)}>
+                    선생님 화면
+                  </button>
+                  <button type="button" className={studentView ? s.on : ''} onClick={() => setStudentView(true)}>
+                    학생 화면
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {studentView && (
+              <p className={s.notice}>
+                학생 화면 미리보기입니다. 학생은 코멘트를 읽기만 할 수 있고, 판을 고칠 수 없습니다.
+              </p>
+            )}
+          </>
+        }
         editor={editor}
         comments={comments}
         commentActions={commentActions}
