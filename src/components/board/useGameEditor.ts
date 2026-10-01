@@ -67,7 +67,11 @@ export interface GameEditor {
   canForward: boolean
 }
 
-export function useGameEditor(initial: GameTree | (() => GameTree), onOps?: (ops: TreeOp[]) => void): GameEditor {
+export function useGameEditor(
+  initial: GameTree | (() => GameTree),
+  /** 내 편집이 일어날 때마다 호출 (nodeId = 편집 후 보고 있는 수) */
+  onOps?: (ops: TreeOp[], nodeId?: string) => void,
+): GameEditor {
   const [state, dispatch] = useReducer(reducer, undefined, () => {
     const tree = typeof initial === 'function' ? initial() : initial
     return { tree, currentId: tree.rootId, lastChild: {} }
@@ -79,7 +83,7 @@ export function useGameEditor(initial: GameTree | (() => GameTree), onOps?: (ops
 
   const apply = useCallback((ops: TreeOp[], nodeId?: string) => {
     dispatch({ type: 'apply', ops, nodeId })
-    if (ops.length) onOpsRef.current?.(ops)
+    if (ops.length) onOpsRef.current?.(ops, nodeId)
   }, [])
   const applyRemote = useCallback((ops: TreeOp[]) => dispatch({ type: 'apply', ops }), [])
   const replace = useCallback((tree: GameTree, nodeId?: string) => dispatch({ type: 'replace', tree, nodeId }), [])

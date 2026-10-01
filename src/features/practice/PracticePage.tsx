@@ -11,27 +11,9 @@ import { SgfParseError } from '../../go/sgf/parse'
 import type { GameTree } from '../../go/tree/gameTree'
 import { BOARD_SIZES } from '../../go/types'
 import { loadPracticeDoc, savePracticeDoc } from '../../data/localPractice'
-import { downloadText, safeFileName, todayStamp } from '../../lib/download'
+import { commentsFromImport, downloadSgfWithComments, titleFromTree } from '../../lib/sgfFile'
 import { SAMPLE_SGF } from './sample'
 import s from './PracticePage.module.css'
-
-function commentsFromImport(nodeComments: Record<string, string>, gameComment: string): CommentMap {
-  const now = new Date().toISOString()
-  const map: CommentMap = {}
-  for (const [key, body] of Object.entries(nodeComments)) map[key] = { key, body, createdAt: now, updatedAt: now }
-  if (gameComment) map[BOARD_MEMO] = { key: BOARD_MEMO, body: gameComment, createdAt: now, updatedAt: now }
-  return map
-}
-
-function titleFromTree(tree: GameTree, fallback: string): string {
-  const root = tree.nodes[tree.rootId].props
-  const gn = root.GN?.[0]?.trim()
-  if (gn) return gn
-  const pb = root.PB?.[0]?.trim()
-  const pw = root.PW?.[0]?.trim()
-  if (pb || pw) return `${pb || '흑'} vs ${pw || '백'}`
-  return fallback
-}
 
 interface Initial {
   tree: GameTree
@@ -127,10 +109,7 @@ export function PracticePage() {
   }
 
   function onExport() {
-    const nodeComments: Record<string, string> = {}
-    for (const [k, v] of Object.entries(comments)) if (k !== BOARD_MEMO) nodeComments[k] = v.body
-    const text = exportSgf(editor.tree, { nodeComments, gameComment: comments[BOARD_MEMO]?.body })
-    downloadText(`${safeFileName(title)}_${todayStamp()}.sgf`, text)
+    downloadSgfWithComments(editor.tree, comments, title)
   }
 
   function createNew(size: number) {

@@ -219,3 +219,15 @@ SGF는 몇 KB 수준의 텍스트라 Storage가 아닌 `boards.sgf` 컬럼에 �
 - Edge Function 관리자 키: 새 방식 `SUPABASE_SECRET_KEYS.default` 우선, 없으면 옛 `SUPABASE_SERVICE_ROLE_KEY` (옛 키는 2026년 말 종료)
 - 프론트엔드는 공개 키(`sb_publishable_…`)만 사용, `.env` 로 분리
 - 계정 정지: Auth ban + `profiles.is_active = false` (이미 로그인한 화면도 RLS가 막음)
+
+## 8. 3단계 구현 메모 (2026-10-01)
+
+- 채널 `lesson:<수업 ID>` (비공개): 판 편집 연산(ops), 선생님 화면 위치(nav), 판 전체(snapshot, SGF), 종료(ended)를 broadcast로 주고받고 presence로 접속자 표시
+- 동기화 규칙은 `src/features/lesson/sync.ts` 하나에 모음 (화면·Supabase와 분리, 선생님 1 + 학생 2 상황 단위 테스트)
+  - 학생이 들어오거나 다시 연결되면 선생님 화면이 판 전체(snapshot)를 보냄
+  - 학생 화면은 선생님이 보는 수를 따라가고, 학생이 직접 넘기면 멈춤 → "선생님 화면 따라가기" 버튼. 같은 수로 돌아오면 자동 재개
+  - "학생도 착수 가능"일 때 학생 수를 두면, 같은 수를 보던 선생님 화면이 따라감
+- 코멘트·수업 상태 변경은 DB 변경 알림(postgres_changes)으로 전달 → 코멘트는 RLS 검사를 거친 것만 학생에게 감
+- 판 저장: 선생님 화면이 1.5초마다(변경 시) `boards.sgf` 에 저장, 수업 종료 시 즉시 저장 후 `status = ended`
+- 수업 기록 = 종료된 수업. 선생님은 판·코멘트 계속 수정 가능, 학생은 읽기 전용 복습
+- 마이그레이션 0005(채널 권한 정책)는 Supabase가 `realtime.messages` 표를 만든 뒤(실시간 기능 첫 접속 후) 적용해야 함

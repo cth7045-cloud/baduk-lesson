@@ -3,6 +3,8 @@ import { AuthProvider, useAuth } from './features/auth/AuthProvider'
 import { LoginPage } from './features/auth/LoginPage'
 import { RequireAuth } from './features/auth/RequireAuth'
 import { HomePage } from './features/home/HomePage'
+import { LessonPage } from './features/lesson/LessonPage'
+import { LessonsPage } from './features/lesson/LessonsPage'
 import { PracticePage } from './features/practice/PracticePage'
 import { StudentsPage } from './features/students/StudentsPage'
 import { supabaseConfigured } from './lib/supabase'
@@ -23,6 +25,11 @@ function Header() {
           바둑 수업
         </NavLink>
         <nav className={s.nav}>
+          {profile && (
+            <NavLink to="/lessons" className={link}>
+              수업
+            </NavLink>
+          )}
           {teacher && (
             <NavLink to="/students" className={link}>
               학생 관리
@@ -68,6 +75,22 @@ export function App() {
                 ) : (
                   <Navigate to="/practice" replace />
                 )
+              }
+            />
+            <Route
+              path="/lessons"
+              element={
+                <RequireAuth>
+                  <LessonsPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/lessons/:id"
+              element={
+                <RequireAuth>
+                  <LessonPage />
+                </RequireAuth>
               }
             />
             <Route
