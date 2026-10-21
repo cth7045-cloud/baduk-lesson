@@ -17,7 +17,7 @@ export function authErrorMessage(message: string): string {
   if (/invalid login credentials/i.test(message)) return '아이디 또는 비밀번호가 맞지 않습니다.'
   if (/banned|user is banned/i.test(message)) return '사용이 정지된 계정입니다. 선생님께 문의하세요.'
   if (/email not confirmed/i.test(message)) return '아직 사용할 수 없는 계정입니다. 선생님께 문의하세요.'
-  if (/network|fetch/i.test(message)) return '인터넷 연결을 확인해 주세요.'
+  if (/network|fetch/i.test(message)) return '서버에 연결하지 못했습니다. 인터넷 연결을 확인하고, 그래도 안 되면 1~2분 뒤 다시 시도해 주세요.'
   if (/rate limit|too many/i.test(message)) return '시도가 너무 많습니다. 잠시 후 다시 해 주세요.'
   return `로그인하지 못했습니다. (${message})`
 }
