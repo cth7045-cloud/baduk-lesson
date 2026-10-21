@@ -218,7 +218,7 @@ function LessonRoom({ initial }: { initial: Loaded }) {
         <div className={s.people}>
           {channel.status === 'connecting' && <span className={s.muted}>실시간 연결 중…</span>}
           {channel.status === 'error' && (
-            <span className={s.warn}>실시간 연결에 실패했습니다. 새로고침해 주세요.</span>
+            <span className={s.warn}>실시간 연결이 끊겼습니다. 자동으로 다시 연결하는 중…</span>
           )}
           {channel.status === 'connected' && (
             <>

@@ -75,42 +75,64 @@ export function useLessonChannel({ lessonId, enabled, me, mode, editor, onEnded 
     )
     syncRef.current = sync
 
-    void (async () => {
+    // 연결이 실패하거나 끊기면 잠시 뒤 스스로 다시 연결 (2초 → 4초 → … 최대 30초)
+    let retryTimer: ReturnType<typeof setTimeout> | undefined
+    let failures = 0
+    const retry = () => {
+      if (!alive || retryTimer) return
+      setStatus('error')
+      const old = channel
+      channel = null
+      channelRef.current = null
+      if (old) void sb.removeChannel(old)
+      const delay = Math.min(30000, 2000 * 2 ** failures)
+      failures++
+      retryTimer = setTimeout(() => {
+        retryTimer = undefined
+        void connect()
+      }, delay)
+    }
+
+    const connect = async () => {
       // 비공개 채널은 로그인 정보로 권한을 확인하므로 먼저 전달
       await sb.realtime.setAuth()
       if (!alive) return
-      channel = sb.channel(`lesson:${lessonId}`, {
+      const ch = sb.channel(`lesson:${lessonId}`, {
         config: { private: true, broadcast: { self: false }, presence: { key: me.id } },
       })
-      channelRef.current = channel
+      channel = ch
+      channelRef.current = ch
       for (const event of ['ops', 'nav', 'snapshot', 'ended'] as const) {
-        channel.on('broadcast', { event }, ({ payload }) => sync.handle({ event, payload } as SyncMessage))
+        ch.on('broadcast', { event }, ({ payload }) => sync.handle({ event, payload } as SyncMessage))
       }
-      channel.on('presence', { event: 'sync' }, () => {
-        const state = channel!.presenceState<OnlineUser>()
+      ch.on('presence', { event: 'sync' }, () => {
+        const state = ch.presenceState<OnlineUser>()
         const users = new Map<string, OnlineUser>()
         for (const list of Object.values(state)) for (const u of list) users.set(u.id, { id: u.id, name: u.name, role: u.role })
         setOnline([...users.values()])
       })
-      channel.on('presence', { event: 'join' }, ({ newPresences }) => {
+      ch.on('presence', { event: 'join' }, ({ newPresences }) => {
         for (const p of newPresences as unknown as OnlineUser[]) if (p.id !== me.id) sync.onPeerJoin(p.role)
       })
-      channel.subscribe(async (st) => {
-        if (!alive) return
+      ch.subscribe(async (st) => {
+        if (!alive || channel !== ch) return
         if (st === 'SUBSCRIBED') {
+          failures = 0
           setStatus('connected')
-          await channel!.track({ id: me.id, name: me.name, role: me.role })
+          await ch.track({ id: me.id, name: me.name, role: me.role })
           sync.onConnected()
         } else if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT') {
-          setStatus('error')
+          retry()
         } else if (st === 'CLOSED') {
           setStatus((s) => (s === 'error' ? s : 'connecting'))
         }
       })
-    })()
+    }
+    void connect().catch(retry)
 
     return () => {
       alive = false
+      clearTimeout(retryTimer)
       syncRef.current = null
       channelRef.current = null
       if (channel) void sb.removeChannel(channel)
