@@ -1,0 +1,49 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  background-color: #dcb36f;
+  background-size: cover;
+  box-shadow:
+    0 1px 2px rgba(60, 40, 10, 0.25),
+    0 6px 18px rgba(60, 40, 10, 0.12);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  /* 한 손가락 화면 스크롤은 허용, 두 손가락 확대 대신 수 넘기기 제스처 */
+  touch-action: pan-x pan-y;
+}
+
+.interactive {
+  cursor: pointer;
+}
+
+.coords {
+  font-weight: 500;
+}
+
+.highlight {
+  animation: pulse 1.1s ease-in-out 3;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.12);
+  }
+}

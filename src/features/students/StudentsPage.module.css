@@ -1,0 +1,152 @@
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+}
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+.sub {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.muted,
+.empty {
+  color: var(--ink-3);
+}
+.empty {
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+}
+.error {
+  margin: 0;
+  padding: 9px 12px;
+  border-left: 3px solid var(--danger);
+  background: var(--accent-soft);
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+}
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px 20px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--line);
+}
+.inactive .name,
+.inactive .loginId {
+  color: var(--ink-3);
+}
+.who {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.name {
+  font-size: 16px;
+  font-weight: 700;
+}
+.rank {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.badge {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--line);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.loginId {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.loginId code {
+  margin-left: 4px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px;
+  color: var(--ink);
+}
+.actions {
+  display: flex;
+  gap: 2px;
+}
+@media (max-width: 640px) {
+  .head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .row {
+    grid-template-columns: 1fr;
+  }
+  .actions {
+    margin-left: -8px;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.field small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.input {
+  height: 42px;
+  padding: 0 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--ink-2);
+}
+
+.growthLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 9px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+.growthLink:hover {
+  background: rgba(0, 0, 0, 0.05);
+}

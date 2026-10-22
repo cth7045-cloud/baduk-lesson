@@ -1,0 +1,146 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.section {
+  padding: 12px 14px 14px;
+}
+.memoSection {
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+.nodeLabel {
+  font-size: 13px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.text {
+  font-size: 15px;
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.text strong {
+  font-weight: 700;
+}
+
+.coord {
+  display: inline;
+  padding: 0 2px;
+  margin: 0 1px;
+  border: none;
+  border-bottom: 1.5px solid var(--accent);
+  border-radius: 2px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: inherit;
+}
+.coord:hover {
+  background: #efd3cc;
+}
+
+.comment {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 30px;
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.metaActions {
+  display: flex;
+  gap: 2px;
+  margin-right: -8px;
+}
+
+.empty {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 15px;
+  line-height: 1.55;
+  resize: none;
+}
+.textarea:focus {
+  outline: none;
+  border-color: var(--ink-2);
+  box-shadow: 0 0 0 3px rgba(29, 28, 26, 0.08);
+}
+.textarea::placeholder {
+  color: var(--ink-3);
+}
+.editorActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.source {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--line-strong);
+  background: var(--surface-2);
+  font-size: 14px;
+}
+.sourceLabel {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.help {
+  margin: 0;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+.help b {
+  color: var(--ink-2);
+}
