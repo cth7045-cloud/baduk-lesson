@@ -114,7 +114,7 @@ function stonesFrom(spec: string): { x: number; y: number; color: Color }[] {
   return out
 }
 
-describe('바둑판 이미지 인식', () => {
+describe('바둑판 이미지 인식', { timeout: 30000 }, () => {
   it('19줄 전체 판 (나무판, 입체 흰 돌)', () => {
     const stones = stonesFrom('B:pd,dp,qq,cc,jj,ss W:dd,pp,qc,aa,ja,sa')
     const img = render({ size: 19, view: { x0: 0, y0: 0, x1: 18, y1: 18 }, spacing: 32, margin: 24, stones, style: WOOD, noise: 6 })

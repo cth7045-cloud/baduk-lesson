@@ -12,6 +12,10 @@
 .svg {
   display: block;
   font-family: inherit;
+  /* 길게 누르기 = 미리 보기 (글자 선택·브라우저 메뉴가 아님) */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .edge {
@@ -87,4 +91,24 @@
   stroke: var(--danger);
   stroke-width: 2.5;
   stroke-dasharray: 3 2;
+}
+
+/* 수순 미리 보기 (마우스 올리기 / 길게 누르기) */
+.peek {
+  position: fixed;
+  z-index: 30;
+  padding: 6px 6px 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+}
+.peekText {
+  display: block;
+  padding-top: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--ink-2);
 }

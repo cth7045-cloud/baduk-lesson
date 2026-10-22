@@ -18,8 +18,8 @@
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
-  /* 두 번 탭 확대 지연을 없애되 화면 스크롤은 허용 */
-  touch-action: manipulation;
+  /* 한 손가락 화면 스크롤은 허용, 두 손가락 확대 대신 수 넘기기 제스처 */
+  touch-action: pan-x pan-y;
 }
 
 .interactive {

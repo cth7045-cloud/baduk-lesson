@@ -1,4 +1,4 @@
-import { memo, useId, useMemo, useRef, useState, type PointerEvent } from 'react'
+import { memo, useEffect, useId, useMemo, useRef, useState, type MouseEvent, type PointerEvent } from 'react'
 import { displayColumnLabel, starPoints } from '../../go/coords'
 import type { NodeMarkup } from '../../go/markup'
 import type { BoardState } from '../../go/rules/board'
@@ -30,7 +30,17 @@ export interface GoBoardProps {
   /** 마우스를 올렸을 때 미리 보여 줄 돌 색 (null이면 표시 안 함) */
   hoverColor?: Color | null
   onPointClick?: (p: Point, pointerType: string) => void
+  /**
+   * 수 이동 제스처 (카타고 클라우드와 같음): 마우스 휠·터치패드 두 손가락 위아래, 터치 두 손가락 위아래 = 앞뒤 수,
+   * 오른쪽 클릭(터치패드 두 손가락 탭)·터치 세 손가락 탭 = 한 수 뒤로. delta: -1 이전 / +1 다음
+   */
+  onStep?: (delta: number) => void
 }
+
+/** 터치 제스처 기준값 (카타고 클라우드와 같음) */
+const LONG_PRESS_MS = 200
+const TAP_MOVE = 24
+const TWO_FINGER_STEP = 28
 
 function cellIndex(p: Point, size: number) {
   return p.y * size + p.x
@@ -50,6 +60,7 @@ export const GoBoard = memo(function GoBoard({
   showCoords = true,
   hoverColor,
   onPointClick,
+  onStep,
 }: GoBoardProps) {
   const size = board.size
   const uid = useId().replace(/:/g, '')
@@ -77,18 +88,21 @@ export const GoBoard = memo(function GoBoard({
     return { x, y }
   }
 
+  // ---------- 마우스·펜: 버튼을 뗄 때 착수 (터치패드의 가벼운 탭도 확실히) ----------
+  const lastPointer = useRef('mouse')
   function onPointerDown(e: PointerEvent<SVGSVGElement>) {
+    lastPointer.current = e.pointerType
+    if (e.pointerType === 'touch') return // 터치는 아래의 터치 제스처에서 처리
     if (!interactive) return
-    if (e.pointerType === 'mouse' && e.button !== 0) return
+    if (e.button !== 0) return
     down.current = { x: e.clientX, y: e.clientY, type: e.pointerType }
   }
 
   function onPointerUp(e: PointerEvent<SVGSVGElement>) {
+    if (e.pointerType === 'touch') return
     const d = down.current
     down.current = null
     if (!d || !onPointClick) return
-    // 손가락이 많이 움직였으면 화면 스크롤로 보고 무시
-    if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 12) return
     const p = toPoint(e.clientX, e.clientY)
     if (p) onPointClick(p, d.type)
   }
@@ -98,6 +112,155 @@ export const GoBoard = memo(function GoBoard({
     const p = toPoint(e.clientX, e.clientY)
     setHover((h) => (h?.x === p?.x && h?.y === p?.y ? h : p))
   }
+
+  /** 오른쪽 클릭 = 한 수 뒤로 (터치의 길게 누르기로 열리는 메뉴는 막기만 함) */
+  function onContextMenu(e: MouseEvent) {
+    e.preventDefault()
+    if (lastPointer.current === 'mouse') onStep?.(-1)
+  }
+
+  // ---------- 휠·터치 제스처 (passive: false 가 필요해 직접 등록) ----------
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const live = useRef({ onPointClick, onStep, hoverColor, toPoint })
+  live.current = { onPointClick, onStep, hoverColor, toPoint }
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    let wheelAcc = 0
+    let wheelAt = 0
+    const onWheel = (ev: WheelEvent) => {
+      const step = live.current.onStep
+      if (!step || ev.ctrlKey) return
+      ev.preventDefault()
+      const dy = ev.deltaMode === 1 ? ev.deltaY * 40 : ev.deltaY
+      const now = performance.now()
+      // 마우스 휠 한 칸(크게 한 번) = 한 수
+      if (Math.abs(dy) >= 50 && now - wheelAt > 300) {
+        step(Math.sign(dy))
+        return
+      }
+      // 터치패드: 작은 움직임을 모음. 손가락을 아래로 = 다음 수 (휴대폰의 두 손가락과 같은 방향)
+      if (now - wheelAt > 300) wheelAcc = 0
+      wheelAt = now
+      wheelAcc -= dy
+      while (Math.abs(wheelAcc) >= 60) {
+        step(Math.sign(wheelAcc))
+        wheelAcc -= 60 * Math.sign(wheelAcc)
+      }
+    }
+
+    type Gesture = {
+      n: number
+      x0: number
+      y0: number
+      lastY: number
+      t0: number
+      moved: boolean
+      aim: boolean
+      acc: number
+      timer: number
+      last: { x: number; y: number }
+    }
+    let tg: Gesture | null = null
+    const mid = (ts: TouchList) => {
+      let x = 0
+      let y = 0
+      for (const t of Array.from(ts)) {
+        x += t.clientX
+        y += t.clientY
+      }
+      return { x: x / ts.length, y: y / ts.length }
+    }
+    const aimAt = (pt: { x: number; y: number }) => {
+      const p = live.current.toPoint(pt.x, pt.y)
+      setHover((h) => (h?.x === p?.x && h?.y === p?.y ? h : p))
+    }
+    const onStart = (ev: TouchEvent) => {
+      if (tg?.timer) window.clearTimeout(tg.timer)
+      const n = ev.touches.length
+      const m = mid(ev.touches)
+      const g: Gesture = { n, x0: m.x, y0: m.y, lastY: m.y, t0: performance.now(), moved: false, aim: false, acc: 0, timer: 0, last: m }
+      tg = g
+      // 한 손가락을 0.2초 누르고 있으면 조준: 손가락을 따라 미리 보기 돌이 움직이고, 떼면 그 자리에 남음 (착수는 안 함)
+      if (n === 1 && live.current.onPointClick && live.current.hoverColor) {
+        g.timer = window.setTimeout(() => {
+          g.timer = 0
+          g.aim = true
+          aimAt(g.last)
+        }, LONG_PRESS_MS)
+      }
+      if (n >= 2) ev.preventDefault() // 두 손가락 이상: 확대·화면 스크롤 대신 제스처
+    }
+    const onMove = (ev: TouchEvent) => {
+      const g = tg
+      if (!g) return
+      const m = mid(ev.touches)
+      g.last = m
+      if (Math.hypot(m.x - g.x0, m.y - g.y0) > TAP_MOVE) {
+        g.moved = true
+        // 길게 누르기 전에 움직였으면 화면 스크롤
+        if (g.timer) {
+          window.clearTimeout(g.timer)
+          g.timer = 0
+        }
+      }
+      if (g.n === 1 && g.aim) {
+        ev.preventDefault()
+        aimAt(m)
+        return
+      }
+      if (g.n === 2 && ev.touches.length === 2) {
+        ev.preventDefault()
+        const step = live.current.onStep
+        g.acc += m.y - g.lastY // 손가락을 아래로 = 다음 수
+        g.lastY = m.y
+        while (step && Math.abs(g.acc) >= TWO_FINGER_STEP) {
+          step(Math.sign(g.acc))
+          g.acc -= TWO_FINGER_STEP * Math.sign(g.acc)
+        }
+      }
+    }
+    const onEnd = (ev: TouchEvent) => {
+      const g = tg
+      if (!g) return
+      if (g.timer) {
+        window.clearTimeout(g.timer)
+        g.timer = 0
+      }
+      if (g.n === 1 && ev.touches.length === 0) {
+        if (!g.aim && !g.moved) {
+          // 짧게 톡 = 착수
+          ev.preventDefault()
+          const p = live.current.toPoint(g.last.x, g.last.y)
+          if (p) live.current.onPointClick?.(p, 'touch')
+        } else if (g.aim) ev.preventDefault()
+      }
+      // 세 손가락으로 빠르게 톡 = 한 수 뒤로
+      if (g.n === 3 && !g.moved && ev.touches.length === 0 && performance.now() - g.t0 < 400) live.current.onStep?.(-1)
+      if (ev.touches.length === 0) tg = null
+    }
+    const onCancel = () => {
+      if (tg?.timer) window.clearTimeout(tg.timer)
+      tg = null
+    }
+    // 조준해 둔 미리 보기 돌은 화면 어디든 다음에 누르면 사라짐
+    const clearAim = () => setHover(null)
+    el.addEventListener('wheel', onWheel, { passive: false })
+    el.addEventListener('touchstart', onStart, { passive: false })
+    el.addEventListener('touchmove', onMove, { passive: false })
+    el.addEventListener('touchend', onEnd, { passive: false })
+    el.addEventListener('touchcancel', onCancel)
+    document.addEventListener('touchstart', clearAim, { capture: true, passive: true })
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      el.removeEventListener('touchstart', onStart)
+      el.removeEventListener('touchmove', onMove)
+      el.removeEventListener('touchend', onEnd)
+      el.removeEventListener('touchcancel', onCancel)
+      document.removeEventListener('touchstart', clearAim, { capture: true })
+      if (tg?.timer) window.clearTimeout(tg.timer)
+    }
+  }, [])
 
   // 표시 색: 돌 위에서는 반대색, 빈 점에서는 진한 색
   const markColor = (p: Point) => {
@@ -121,7 +284,7 @@ export const GoBoard = memo(function GoBoard({
   const r = S * 0.485
 
   return (
-    <div className={s.wrap} style={{ backgroundImage: `url(${woodTextureUrl()})` }}>
+    <div ref={wrapRef} className={s.wrap} style={{ backgroundImage: `url(${woodTextureUrl()})` }}>
       <svg
         ref={svgRef}
         className={`${s.svg} ${interactive ? s.interactive : ''}`}
@@ -130,8 +293,8 @@ export const GoBoard = memo(function GoBoard({
         onPointerUp={onPointerUp}
         onPointerCancel={() => (down.current = null)}
         onPointerMove={onPointerMove}
-        onPointerLeave={() => setHover(null)}
-        onContextMenu={(e) => e.preventDefault()}
+        onPointerLeave={(e) => e.pointerType === 'mouse' && setHover(null)}
+        onContextMenu={onContextMenu}
         role="img"
         aria-label={`${size}줄 바둑판`}
       >

@@ -57,9 +57,9 @@ function freshAttemptTree(problem: GameTree, mode: 'sequence' | 'shape'): GameTr
 
 function loadConfirmTouch(): boolean {
   try {
-    return JSON.parse(localStorage.getItem('baduk-board-prefs-v1') ?? '{}').confirmTouch ?? true
+    return JSON.parse(localStorage.getItem('baduk-board-prefs-v1') ?? '{}').doubleTap ?? false
   } catch {
-    return true
+    return false
   }
 }
 
@@ -158,6 +158,7 @@ function Study({
             lastMove={lastMovePoint(tree, id)}
             highlights={highlight?.points}
             highlightKey={highlight?.key}
+            onStep={mode === 'sequence' ? (d) => setIdx((i) => Math.max(0, Math.min(last, i + d))) : undefined}
           />
         </div>
       </div>

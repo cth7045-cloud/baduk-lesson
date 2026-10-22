@@ -43,10 +43,11 @@ const PREF_KEY = 'baduk-board-prefs-v1'
 interface Prefs {
   showNumbers: boolean
   showCoords: boolean
-  confirmTouch: boolean
+  /** 터치: 두 번 눌러야 착수 (기본은 카타고 클라우드처럼 한 번 톡 = 착수, 길게 누르면 조준) */
+  doubleTap: boolean
 }
 function loadPrefs(): Prefs {
-  const def = { showNumbers: false, showCoords: true, confirmTouch: true }
+  const def = { showNumbers: false, showCoords: true, doubleTap: false }
   try {
     return { ...def, ...JSON.parse(localStorage.getItem(PREF_KEY) ?? '{}') }
   } catch {
@@ -170,7 +171,7 @@ export function BoardWorkspace({
             toast.show(PLAY_ERROR_MESSAGE.occupied)
             return
           }
-          if (pointerType === 'touch' && prefs.confirmTouch && !samePoint(pending?.p, p)) {
+          if (pointerType === 'touch' && prefs.doubleTap && !samePoint(pending?.p, p)) {
             setPending({ p, color: toPlay })
             return
           }
@@ -199,7 +200,7 @@ export function BoardWorkspace({
           editor.apply(toggleShape(tree, currentId, p, tool))
       }
     },
-    [tool, board, prefs.confirmTouch, pending, toPlay, play, tree, currentId, editor, arrowFrom, toast],
+    [tool, board, prefs.doubleTap, pending, toPlay, play, tree, currentId, editor, arrowFrom, toast],
   )
 
   // 키보드: ←→ 이동, ↑↓ 변화 바꾸기, Home/End, PageUp/Down 10수, Enter 코멘트 입력
@@ -234,6 +235,8 @@ export function BoardWorkspace({
   }, [editor, canEditComments])
 
   const onCoordClick = useCallback((p: Point) => setHighlight({ points: [p], key: Date.now() }), [])
+  // 판 위 제스처(휠, 두 손가락 위아래, 오른쪽 클릭, 세 손가락 탭)로 앞뒤 수
+  const onStep = useCallback((d: number) => (d < 0 ? editor.back() : editor.forward()), [editor])
 
   // 현재 수 설명
   const mv = nodeMove(tree, node)
@@ -315,6 +318,7 @@ export function BoardWorkspace({
             showCoords={prefs.showCoords}
             hoverColor={canEditBoard && tool === 'play' ? toPlay : canEditBoard && tool === 'black' ? 'B' : canEditBoard && tool === 'white' ? 'W' : null}
             onPointClick={canEditBoard ? onPointClick : undefined}
+            onStep={onStep}
           />
           {/* 안내 문구는 누른 자리의 반대쪽에 띄워 돌을 가리지 않게 함 */}
           {pending && (
@@ -357,8 +361,8 @@ export function BoardWorkspace({
           {canEditBoard && (
             <Toggle
               label="터치 두 번 눌러 착수"
-              on={prefs.confirmTouch}
-              onChange={(v) => setPrefs({ ...prefs, confirmTouch: v })}
+              on={prefs.doubleTap}
+              onChange={(v) => setPrefs({ ...prefs, doubleTap: v })}
             />
           )}
           {aside && <div className={s.aside}>{aside}</div>}

@@ -44,9 +44,9 @@ function freshAttemptTree(problem: GameTree): GameTree {
 
 function loadConfirmTouch(): boolean {
   try {
-    return JSON.parse(localStorage.getItem('baduk-board-prefs-v1') ?? '{}').confirmTouch ?? true
+    return JSON.parse(localStorage.getItem('baduk-board-prefs-v1') ?? '{}').doubleTap ?? false
   } catch {
-    return true
+    return false
   }
 }
 
