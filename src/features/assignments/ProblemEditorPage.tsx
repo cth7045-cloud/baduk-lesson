@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import type { CommentMap } from '../../components/comments/types'
+import { ImageImportDialog } from '../../components/imageImport/ImageImportDialog'
+import { usePasteImage } from '../../components/imageImport/usePasteImage'
 import { Button } from '../../components/ui/Button'
 import { useToast } from '../../components/ui/Toast'
 import { BoardWorkspace } from '../../components/workspace/BoardWorkspace'
@@ -10,6 +12,7 @@ import { loadBoard } from '../../data/boards'
 import { listComments } from '../../data/comments'
 import { createTag, getProblem, listTags, updateProblem, type ProblemRow, type Tag } from '../../data/problems'
 import { saveStateLabel, useBoardDocument } from '../boards/useBoardDocument'
+import { MemorizeSolver, memorizeMoves } from './MemorizeSolver'
 import { ProblemSolver } from './ProblemSolver'
 import { TagPicker } from './common'
 import s from './Assignments.module.css'
@@ -54,6 +57,10 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
   const [tagIds, setTagIds] = useState(initial.problem.tags.map((t) => t.tag_id))
   const [metaDirty, setMetaDirty] = useState(false)
   const [preview, setPreview] = useState(false)
+  const memorize = problem.kind === 'memorize'
+  // 이미지로 배치 불러오기 (false = 닫힘, null = 빈 상태로 열기, Blob = 붙여넣은 그림)
+  const [imageOpen, setImageOpen] = useState<Blob | null | false>(false)
+  usePasteImage(!preview && imageOpen === false, (f) => setImageOpen(f))
 
   const { editor, comments, commentActions, saveState, flush } = useBoardDocument({
     boardId: problem.board_id,
@@ -69,6 +76,7 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
   const node = getNode(tree, currentId)
   const isMove = !!nodeMove(tree, node)
   const summary = useMemo(() => summarizeProblem(tree), [tree])
+  const memorizeCount = useMemo(() => (memorize ? memorizeMoves(tree).length : 0), [memorize, tree])
 
   function setToPlay(c: 'B' | 'W') {
     editor.apply([{ type: 'setProps', nodeId: tree.rootId, props: { PL: [c] } }])
@@ -115,7 +123,11 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
             출제 화면으로
           </Button>
         </div>
-        <ProblemSolver title={title || '문제'} problemTree={tree} comments={comments} />
+        {memorize ? (
+          <MemorizeSolver title={title || '모양 외우기'} problemTree={tree} comments={comments} />
+        ) : (
+          <ProblemSolver title={title || '문제'} problemTree={tree} comments={comments} />
+        )}
       </div>
     )
   }
@@ -123,7 +135,7 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
   const header = (
     <div className={s.editorHead}>
       <Link to="/assignments?tab=problems" className={s.back}>
-        ← 문제 은행
+        ← 문제 은행{memorize ? ' · 모양 외우기' : ''}
       </Link>
       <input
         className={s.titleInput}
@@ -136,14 +148,16 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
         maxLength={120}
       />
       <div className={s.metaRow}>
-        <div className={s.segment}>
-          <button type="button" className={toPlay === 'B' ? s.on : ''} onClick={() => setToPlay('B')}>
-            흑선
-          </button>
-          <button type="button" className={toPlay === 'W' ? s.on : ''} onClick={() => setToPlay('W')}>
-            백선
-          </button>
-        </div>
+        {!memorize && (
+          <div className={s.segment}>
+            <button type="button" className={toPlay === 'B' ? s.on : ''} onClick={() => setToPlay('B')}>
+              흑선
+            </button>
+            <button type="button" className={toPlay === 'W' ? s.on : ''} onClick={() => setToPlay('W')}>
+              백선
+            </button>
+          </div>
+        )}
         <label className={s.inline}>
           난이도
           <select
@@ -178,6 +192,32 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
         </Button>
       )}
 
+      {memorize ? (
+        <>
+      <div className={s.markBox}>
+        <span className={s.markLabel}>외울 내용:</span>
+        <span>{memorizeCount ? `수순 ${memorizeCount}수 (본선)` : '수순 없음 → 돌 모양 외우기'}</span>
+      </div>
+
+      <details className={s.guide} open>
+        <summary>외우기 과제 만드는 방법</summary>
+        <ol>
+          <li>
+            <b>수순 외우기</b> (정석 등): 착수 도구로 외울 수순을 차례로 둡니다. 시험에서 학생은 처음 배치부터 같은 순서로 둬야 합니다. 갈래(변화도)는 보여 주기만 하고, 시험은 <b>본선</b>(첫 번째 줄기)만 봅니다.
+          </li>
+          <li>
+            <b>모양 외우기</b>: 수순 없이 도구 막대의 <b>흑돌·백돌 놓기</b>로 모양만 놓습니다. 시험에서 학생은 빈 판에 같은 모양을 그대로 놓습니다.
+          </li>
+          <li>
+            <b>이미지로 배치 불러오기</b>로 책·화면 캡처의 모양을 바로 가져올 수도 있습니다.
+          </li>
+          <li>각 수에 코멘트를 달면 학생이 외우는 단계에서 함께 봅니다. 전체 설명은 아래 "설명"에 씁니다.</li>
+        </ol>
+      </details>
+
+        </>
+      ) : (
+        <>
       <div className={s.markBox}>
         <span className={s.markLabel}>
           {isMove ? '지금 수를' : '수를 선택한 뒤'} 표시:
@@ -214,6 +254,9 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
         </ol>
       </details>
 
+        </>
+      )}
+
       <Button
         variant="primary"
         onClick={() => {
@@ -221,8 +264,9 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
           setPreview(true)
         }}
       >
-        학생처럼 풀어 보기
+        {memorize ? '학생처럼 해 보기' : '학생처럼 풀어 보기'}
       </Button>
+      <Button onClick={() => setImageOpen(null)}>이미지로 배치 불러오기</Button>
     </div>
   )
 
@@ -235,9 +279,24 @@ function ProblemEditor({ initial }: { initial: Loaded }) {
         commentActions={commentActions}
         canEditComments
         canEditBoard
-        memoLabel="문제 설명"
+        memoLabel={memorize ? '설명' : '문제 설명'}
         aside={<span className={s.muted}>{saveStateLabel(saveState)}</span>}
       />
+      {imageOpen !== false && (
+        <ImageImportDialog
+          initialFile={imageOpen}
+          onClose={() => setImageOpen(false)}
+          onApply={(next, msg) => {
+            const hasMoves = root.children.length > 0
+            if (hasMoves && !window.confirm('지금 판을 이미지의 배치로 바꿀까요? 지금까지 둔 수순과 정답·오답 표시가 지워집니다.')) return
+            editor.apply([{ type: 'replaceTree', tree: next }])
+            const pl = next.nodes[next.rootId].props.PL?.[0]
+            if (!memorize && pl && pl !== toPlay) setMetaDirty(true)
+            setImageOpen(false)
+            toast.show(msg)
+          }}
+        />
+      )}
       {toast.node}
     </div>
   )

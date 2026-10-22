@@ -1,6 +1,7 @@
 import { exportSgf } from '../go/sgf/convert'
 import type { GameTree } from '../go/tree/gameTree'
 import { requireSupabase } from '../lib/supabase'
+import type { ProblemKind } from './problems'
 
 export interface AssignmentSet {
   id: string
@@ -12,7 +13,7 @@ export interface AssignmentSet {
 }
 
 export interface SetDetail extends AssignmentSet {
-  problems: { problem_id: string; position: number; problems: { id: string; title: string; to_play: 'B' | 'W'; board_id: string } | null }[]
+  problems: { problem_id: string; position: number; problems: { id: string; title: string; kind: ProblemKind; to_play: 'B' | 'W'; board_id: string } | null }[]
   targets: { student_id: string; profiles: { display_name: string; is_active: boolean } | null }[]
 }
 
@@ -31,7 +32,7 @@ export interface Attempt {
 }
 
 const SET_SELECT =
-  '*, problems:assignment_set_problems(problem_id, position, problems(id, title, to_play, board_id)), targets:assignment_targets(student_id, profiles(display_name, is_active))'
+  '*, problems:assignment_set_problems(problem_id, position, problems(id, title, kind, to_play, board_id)), targets:assignment_targets(student_id, profiles(display_name, is_active))'
 
 function sortProblems(s: SetDetail): SetDetail {
   return { ...s, problems: [...s.problems].sort((a, b) => a.position - b.position) }

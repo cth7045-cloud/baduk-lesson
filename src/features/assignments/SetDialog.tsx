@@ -5,7 +5,7 @@ import { saveSet, type SetDetail } from '../../data/assignments'
 import { listProblems, type ProblemRow } from '../../data/problems'
 import type { Profile } from '../auth/types'
 import { listStudents } from '../students/api'
-import { toPlayLabel } from './common'
+import { problemLabel } from './common'
 import s from './Assignments.module.css'
 
 /** <input type="datetime-local"> 값 ↔ ISO 시각 */
@@ -116,7 +116,7 @@ export function SetDialog({ set, onClose, onSaved }: { set: SetDetail | null; on
                 return (
                   <li key={id}>
                     <span className={s.pickNo}>{i + 1}</span>
-                    <span className={s.pickTitle}>{p ? `${p.title} · ${toPlayLabel(p.to_play)}` : '(불러오는 중)'}</span>
+                    <span className={s.pickTitle}>{p ? `${p.title} · ${problemLabel(p)}` : '(불러오는 중)'}</span>
                     <button type="button" onClick={() => move(id, -1)} disabled={i === 0} aria-label="위로">
                       ↑
                     </button>
@@ -137,7 +137,7 @@ export function SetDialog({ set, onClose, onSaved }: { set: SetDetail | null; on
             <div className={s.addList}>
               {available.map((p) => (
                 <button key={p.id} type="button" onClick={() => setOrder([...order, p.id])}>
-                  + {p.title || '(제목 없음)'} <small>{toPlayLabel(p.to_play)}</small>
+                  + {p.title || '(제목 없음)'} <small>{problemLabel(p)}</small>
                 </button>
               ))}
             </div>

@@ -4,10 +4,10 @@ import { Button } from '../../components/ui/Button'
 import { Dialog } from '../../components/ui/Dialog'
 import { BOARD_SIZES } from '../../go/types'
 import { listAllAttempts, listSets, type Attempt, type SetDetail } from '../../data/assignments'
-import { createProblem, createTag, listProblems, listTags, type ProblemRow, type Tag } from '../../data/problems'
+import { createProblem, createTag, listProblems, listTags, type ProblemKind, type ProblemRow, type Tag } from '../../data/problems'
 import { useAuth } from '../auth/AuthProvider'
 import { SetDialog } from './SetDialog'
-import { dueLabel, TagPicker, toPlayLabel } from './common'
+import { dueLabel, problemLabel, TagPicker } from './common'
 import s from './Assignments.module.css'
 
 /** 과제: 선생님 = 과제 묶음 + 문제 은행, 학생 = 받은 과제 */
@@ -87,7 +87,7 @@ function SetList({ sets, attempts, isTeacher, myId }: { sets: SetDetail[] | null
     return (
       <p className={s.empty}>
         {isTeacher
-          ? '아직 과제 묶음이 없습니다. 먼저 "문제 은행"에서 문제를 만든 뒤, "과제 묶음 만들기"로 학생에게 배정하세요.'
+          ? '아직 과제 묶음이 없습니다. 먼저 "문제 은행"에서 문제(사활·수읽기 또는 모양 외우기)를 만든 뒤, "과제 묶음 만들기"로 학생에게 배정하세요.'
           : '받은 과제가 없습니다.'}
       </p>
     )
@@ -162,7 +162,7 @@ function ProblemBank() {
                 <span className={s.rowMain}>
                   <span className={s.rowTitle}>{p.title || '(제목 없음)'}</span>
                   <span className={s.rowSub}>
-                    {toPlayLabel(p.to_play)}
+                    {problemLabel(p)}
                     {p.difficulty ? ` · 난이도 ${p.difficulty}` : ''}
                   </span>
                 </span>
@@ -193,6 +193,7 @@ function ProblemBank() {
 function NewProblemDialog({ tags, onTagsChange, onClose }: { tags: Tag[]; onTagsChange: (t: Tag[]) => void; onClose: () => void }) {
   const navigate = useNavigate()
   const [title, setTitle] = useState('')
+  const [kind, setKind] = useState<ProblemKind>('solve')
   const [size, setSize] = useState<number>(19)
   const [toPlay, setToPlay] = useState<'B' | 'W'>('B')
   const [picked, setPicked] = useState<string[]>(() => tags.filter((t) => t.name === '사활').map((t) => t.id))
@@ -212,10 +213,10 @@ function NewProblemDialog({ tags, onTagsChange, onClose }: { tags: Tag[]; onTags
   }
 
   async function create() {
-    if (!title.trim()) return setError('문제 이름을 입력해 주세요. (예: 귀의 사활 1)')
+    if (!title.trim()) return setError(kind === 'memorize' ? '이름을 입력해 주세요. (예: 화점 정석 1)' : '문제 이름을 입력해 주세요. (예: 귀의 사활 1)')
     setBusy(true)
     try {
-      const id = await createProblem(title.trim(), size, toPlay, picked)
+      const id = await createProblem(title.trim(), size, kind === 'memorize' ? 'B' : toPlay, picked, kind)
       navigate(`/problems/${id}`)
     } catch (e) {
       setError(`문제를 만들지 못했습니다: ${(e as Error).message}`)
@@ -239,9 +240,32 @@ function NewProblemDialog({ tags, onTagsChange, onClose }: { tags: Tag[]; onTags
       }
     >
       <div className={s.form}>
+        <div className={s.field}>
+          종류
+          <div className={s.segment}>
+            <button type="button" className={kind === 'solve' ? s.on : ''} onClick={() => setKind('solve')}>
+              사활·수읽기 문제
+            </button>
+            <button type="button" className={kind === 'memorize' ? s.on : ''} onClick={() => setKind('memorize')}>
+              모양 외우기
+            </button>
+          </div>
+          <span className={s.muted}>
+            {kind === 'solve'
+              ? '학생이 정답 수를 찾아 두면 자동으로 채점합니다.'
+              : '정석 같은 수순이나 돌 모양을 보여 주고, 학생이 외워서 그대로 다시 놓으면 자동으로 채점합니다.'}
+          </span>
+        </div>
         <label className={s.field}>
-          문제 이름
-          <input className={s.input} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} autoFocus placeholder="예: 귀의 사활 1" />
+          {kind === 'memorize' ? '이름' : '문제 이름'}
+          <input
+            className={s.input}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={120}
+            autoFocus
+            placeholder={kind === 'memorize' ? '예: 화점 정석 1, 귀의 기본 모양' : '예: 귀의 사활 1'}
+          />
         </label>
         <div className={s.field}>
           판 크기
@@ -253,17 +277,19 @@ function NewProblemDialog({ tags, onTagsChange, onClose }: { tags: Tag[]; onTags
             ))}
           </div>
         </div>
-        <div className={s.field}>
-          둘 차례 (학생)
-          <div className={s.segment}>
-            <button type="button" className={toPlay === 'B' ? s.on : ''} onClick={() => setToPlay('B')}>
-              흑선
-            </button>
-            <button type="button" className={toPlay === 'W' ? s.on : ''} onClick={() => setToPlay('W')}>
-              백선
-            </button>
+        {kind === 'solve' && (
+          <div className={s.field}>
+            둘 차례 (학생)
+            <div className={s.segment}>
+              <button type="button" className={toPlay === 'B' ? s.on : ''} onClick={() => setToPlay('B')}>
+                흑선
+              </button>
+              <button type="button" className={toPlay === 'W' ? s.on : ''} onClick={() => setToPlay('W')}>
+                백선
+              </button>
+            </div>
           </div>
-        </div>
+        )}
         <div className={s.field}>
           주제 태그
           <TagPicker tags={tags} selected={picked} onChange={setPicked} onAdd={() => void addTag()} />

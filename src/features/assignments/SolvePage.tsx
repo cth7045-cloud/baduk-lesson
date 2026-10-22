@@ -7,6 +7,7 @@ import { getSet, listAttempts, recordAttempt, type Attempt, type SetDetail } fro
 import { loadBoard } from '../../data/boards'
 import { listComments } from '../../data/comments'
 import { useAuth } from '../auth/AuthProvider'
+import { MemorizeSolver } from './MemorizeSolver'
 import { ProblemSolver, type TryResult } from './ProblemSolver'
 import s from './Assignments.module.css'
 
@@ -14,6 +15,7 @@ interface Loaded {
   set: SetDetail
   problemId: string
   title: string
+  memorize: boolean
   problemTree: GameTree
   comments: CommentMap
   attempt: Attempt | null
@@ -43,7 +45,7 @@ export function SolvePage() {
         const attempt = attempts.find((a) => a.problem_id === problemId && a.student_id === profile.id) ?? null
         let attemptTree: GameTree | null = null
         if (attempt?.board_id) attemptTree = (await loadBoard(attempt.board_id)).tree
-        setData({ set, problemId, title: entry.problems.title, problemTree: tree, comments, attempt, attemptTree })
+        setData({ set, problemId, title: entry.problems.title, memorize: entry.problems.kind === 'memorize', problemTree: tree, comments, attempt, attemptTree })
       } catch (e) {
         setError((e as Error).message)
       }
@@ -60,6 +62,7 @@ function Solve({ data, studentId, isTeacher }: { data: Loaded; studentId: string
   const attemptRef = useRef<Attempt | null>(data.attempt)
   const [solvedNow, setSolvedNow] = useState(false)
   const alreadySolved = !!data.attempt?.solved
+  const Solver = data.memorize ? MemorizeSolver : ProblemSolver
   const order = data.set.problems.map((p) => p.problem_id)
   const current = order.indexOf(data.problemId)
   const next = order[current + 1]
@@ -95,7 +98,7 @@ function Solve({ data, studentId, isTeacher }: { data: Loaded; studentId: string
       <Link to={`/assignments/${data.set.id}`} className={s.back}>
         ← {data.set.title} ({current + 1}/{order.length})
       </Link>
-      <ProblemSolver
+      <Solver
         title={data.title}
         problemTree={data.problemTree}
         comments={data.comments}

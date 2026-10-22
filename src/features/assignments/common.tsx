@@ -12,6 +12,11 @@ export function toPlayLabel(c: 'B' | 'W') {
   return c === 'B' ? '흑선' : '백선'
 }
 
+/** 목록에 보이는 문제 설명: 외우기 과제는 "모양 외우기", 문제는 흑선·백선 */
+export function problemLabel(p: { kind?: string; to_play: 'B' | 'W' }) {
+  return p.kind === 'memorize' ? '모양 외우기' : toPlayLabel(p.to_play)
+}
+
 /** 태그 고르기 (여러 개) */
 export function TagPicker({
   tags,

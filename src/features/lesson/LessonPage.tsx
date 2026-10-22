@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import type { GameEditor } from '../../components/board/useGameEditor'
 import type { CommentMap } from '../../components/comments/types'
 import { formatDateTime } from '../../components/comments/format'
+import { ImageImportDialog } from '../../components/imageImport/ImageImportDialog'
+import { usePasteImage } from '../../components/imageImport/usePasteImage'
 import { Button } from '../../components/ui/Button'
 import { useToast } from '../../components/ui/Toast'
 import { BoardWorkspace } from '../../components/workspace/BoardWorkspace'
@@ -67,6 +69,9 @@ function LessonRoom({ initial }: { initial: Loaded }) {
   const fileRef = useRef<HTMLInputElement>(null)
   const boardId = lesson.board_id
   const live = lesson.status === 'live'
+  // 이미지로 배치 불러오기 (false = 닫힘, null = 빈 상태로 열기, Blob = 붙여넣은 그림)
+  const [imageOpen, setImageOpen] = useState<Blob | null | false>(false)
+  usePasteImage(isTeacher && imageOpen === false, (f) => setImageOpen(f))
 
   // 내 편집 → 채널로 전송 (채널 훅이 아래에서 만들어지므로 참조로 연결)
   const sendOpsRef = useRef<(ops: TreeOp[], nodeId?: string) => void>(() => {})
@@ -287,6 +292,9 @@ function LessonRoom({ initial }: { initial: Loaded }) {
             <Button size="small" onClick={() => fileRef.current?.click()}>
               SGF 불러오기
             </Button>
+            <Button size="small" onClick={() => setImageOpen(null)}>
+              이미지로 불러오기
+            </Button>
             <Button size="small" onClick={resetBoard}>
               판 초기화
             </Button>
@@ -321,6 +329,20 @@ function LessonRoom({ initial }: { initial: Loaded }) {
           isTeacher && <span className={s.saveState}>{saveStateLabel(saveState)}</span>
         }
       />
+      {imageOpen !== false && (
+        <ImageImportDialog
+          initialFile={imageOpen}
+          onClose={() => setImageOpen(false)}
+          onApply={(tree, summary) => {
+            const root = editor.tree.nodes[editor.tree.rootId]
+            if (root.children.length && !window.confirm('지금 판을 이미지의 배치로 바꿀까요? 지금까지의 수순이 지워집니다.\n(필요하면 먼저 "SGF 내보내기"를 하세요)'))
+              return
+            editor.apply([{ type: 'replaceTree', tree }])
+            setImageOpen(false)
+            toast.show(summary)
+          }}
+        />
+      )}
       {toast.node}
     </div>
   )

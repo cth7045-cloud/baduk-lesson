@@ -1,0 +1,124 @@
+.note {
+  margin: 0 0 12px !important;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.error {
+  margin: 0 0 12px !important;
+  color: var(--danger) !important;
+  font-size: 14px;
+}
+.small {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: var(--ink-3) !important;
+}
+
+.drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 220px;
+  padding: 24px 16px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  text-align: center;
+}
+.dropOver {
+  border-color: var(--comment);
+  background: #eef3fa;
+}
+.dropHint {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.dropHint kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 12px;
+}
+.reading {
+  font-size: 15px;
+  color: var(--ink-2);
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 18px;
+  align-items: start;
+}
+.stage {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+.canvas {
+  display: block;
+  max-width: 100%;
+  border-radius: var(--radius);
+  background: #111;
+  touch-action: none;
+  cursor: pointer;
+}
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.segment {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.segment button,
+.corners button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.corners {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 2px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.on {
+  background: var(--ink) !important;
+  color: #fff !important;
+}
+.mini {
+  width: 96px;
+  height: 96px;
+}
+
+@media (max-width: 720px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

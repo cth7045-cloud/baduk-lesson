@@ -5,7 +5,7 @@ import { getSet, listAttempts, type Attempt, type SetDetail } from '../../data/a
 import { boardsWithNewComments, commentCounts } from '../../data/reads'
 import { useAuth } from '../auth/AuthProvider'
 import { SetDialog } from './SetDialog'
-import { dueLabel, toPlayLabel } from './common'
+import { dueLabel, problemLabel } from './common'
 import s from './Assignments.module.css'
 
 /** 과제 묶음: 선생님 = 학생별 현황표, 학생 = 문제 목록 */
@@ -71,11 +71,14 @@ export function SetPage() {
                 <span className={s.pickNo}>{i + 1}</span>
                 <span className={s.rowMain}>
                   <span className={s.rowTitle}>{p.problems?.title ?? '문제'}</span>
-                  <span className={s.rowSub}>{p.problems ? toPlayLabel(p.problems.to_play) : ''}</span>
+                  <span className={s.rowSub}>{p.problems ? problemLabel(p.problems) : ''}</span>
                 </span>
                 <span className={s.state}>
                   {a?.solved ? (
-                    <span className={s.ok}>✓ 정답{a.tries > 1 ? ` (${a.tries}번째)` : ''}</span>
+                    <span className={s.ok}>
+                      ✓ {p.problems?.kind === 'memorize' ? '통과' : '정답'}
+                      {a.tries > 1 ? ` (${a.tries}번째)` : ''}
+                    </span>
                   ) : a ? (
                     <span className={s.ng}>{a.tries}번 시도</span>
                   ) : (
@@ -89,7 +92,7 @@ export function SetPage() {
                     </Link>
                   )}
                   <Link to={`/assignments/${set.id}/solve/${p.problem_id}`} className={s.solveBtn}>
-                    {a?.solved ? '다시 풀기' : '풀기'}
+                    {p.problems?.kind === 'memorize' ? (a?.solved ? '다시 외우기' : '외우기') : a?.solved ? '다시 풀기' : '풀기'}
                   </Link>
                 </span>
               </li>
@@ -129,7 +132,7 @@ function TeacherMatrix({
           <tr>
             <th>학생</th>
             {set.problems.map((p, i) => (
-              <th key={p.problem_id} title={p.problems?.title}>
+              <th key={p.problem_id} title={`${p.problems?.title ?? ''}${p.problems?.kind === 'memorize' ? ' (모양 외우기)' : ''}`}>
                 <Link to={`/problems/${p.problem_id}`}>{i + 1}</Link>
               </th>
             ))}
@@ -171,7 +174,7 @@ function TeacherMatrix({
           })}
         </tbody>
       </table>
-      <p className={s.legend}>✓ 정답 · ✕ 아직 못 맞힘 · – 안 풂 · 칸을 누르면 학생의 풀이 기록을 보고 피드백 코멘트를 쓸 수 있습니다.</p>
+      <p className={s.legend}>✓ 정답(외우기는 통과) · ✕ 아직 못 맞힘 · – 안 풂 · 칸을 누르면 학생의 풀이 기록을 보고 피드백 코멘트를 쓸 수 있습니다.</p>
     </div>
   )
 }

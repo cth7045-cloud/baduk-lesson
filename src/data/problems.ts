@@ -1,4 +1,4 @@
-import { createTree } from '../go/tree/gameTree'
+import { createTree, type GameTree } from '../go/tree/gameTree'
 import { requireSupabase } from '../lib/supabase'
 import { treeToStoredSgf } from './boards'
 
@@ -8,10 +8,16 @@ export interface Tag {
   sort_order: number
 }
 
+/** solve = 사활·수읽기 문제, memorize = 모양(수순) 외우기 */
+export type ProblemKind = 'solve' | 'memorize'
+
+export const PROBLEM_KIND_LABEL: Record<ProblemKind, string> = { solve: '사활·수읽기', memorize: '모양 외우기' }
+
 export interface ProblemRow {
   id: string
   board_id: string
   title: string
+  kind: ProblemKind
   to_play: 'B' | 'W'
   difficulty: number | null
   created_at: string
@@ -54,18 +60,29 @@ export async function getProblem(id: string): Promise<ProblemRow> {
   return data as unknown as ProblemRow
 }
 
-/** 새 문제: 빈 판(둘 차례만 정해 둠)으로 시작 */
-export async function createProblem(title: string, size: number, toPlay: 'B' | 'W', tagIds: string[]): Promise<string> {
-  const tree = createTree(size, { GM: ['1'], FF: ['4'], SZ: [String(size)], PL: [toPlay] })
+/** 새 문제: 빈 판(둘 차례만 정해 둠)으로 시작. tree 를 주면 그 배치로 시작 (이미지에서 읽은 배치 등) */
+export async function createProblem(
+  title: string,
+  size: number,
+  toPlay: 'B' | 'W',
+  tagIds: string[],
+  kind: ProblemKind = 'solve',
+  tree: GameTree = createTree(size, { GM: ['1'], FF: ['4'], SZ: [String(size)], PL: [toPlay] }),
+): Promise<string> {
   const { data, error } = await requireSupabase().rpc('create_problem', {
     p_title: title,
-    p_size: size,
+    p_size: tree.size,
     p_sgf: treeToStoredSgf(tree),
     p_to_play: toPlay,
     p_tag_ids: tagIds,
   })
   if (error) throw new Error(error.message)
-  return data as string
+  const id = data as string
+  if (kind !== 'solve') {
+    const r = await requireSupabase().from('problems').update({ kind }).eq('id', id)
+    if (r.error) throw new Error(r.error.message)
+  }
+  return id
 }
 
 export async function updateProblem(
